@@ -149,10 +149,12 @@ class CoinbaseWrapper extends Nette\Object
 				$result = $this->callAndHandleExceptions($callbackFunction, $parameters, $userId, False);
 			}
 			else{
+				$result = NULL;
 				//todo - log error				
 			}
 		}
 		catch(Coinbase_ApiException $apiException){
+			$result = NULL;
 			//todo - log error
 			//Please wait until your first bitcoin purchase completes before making additional purchases., (Once your first purchase completes you can make multiple purchases at the same time.)
 		}
