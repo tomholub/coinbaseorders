@@ -1,0 +1,96 @@
+{**
+ * My Application layout template.
+ *
+ * @param string   $basePath web base path
+ * @param string   $robots   tell robots how to index the content of a page (optional)
+ * @param array    $flashes  flash messages
+ *}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="">
+	<meta name="robots" content="{$robots}" n:ifset="$robots">
+
+	<title>{block title|striptags}Coinbase Limit Orders{/block}</title>
+
+	
+	{* <link rel="stylesheet" media="print" href="{$basePath}/css/print.css"> *}
+	<link rel="stylesheet" href="http://www.w3resource.com/twitter-bootstrap/twitter-bootstrap-v2/docs/assets/css/bootstrap.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="{$basePath}/js/bootstrap.min.js"></script>
+	<script src="{$basePath}/js/grid.js"></script>
+	<script src="{$basePath}/js/jquery-ui.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>	
+	<link rel="stylesheet" href="{$basePath}/css/grid.css" />
+	<link rel="stylesheet" href="{$basePath}/css/jquery-ui/jquery-ui.css" />
+	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" />
+	
+	
+	<link rel="shortcut icon" href="{$basePath}/favicon.ico" />
+	{block head}{/block}
+</head>
+
+<body>
+	<script> document.documentElement.className+=' js' </script>
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+	<ul class="nav">
+  <li class="active">
+    <a class="brand" href="/">Coinbase Limit Orders</a>
+  </li>
+  <li n:if="$user->isLoggedIn()"><a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'">Orders</a></li>
+</ul>
+{* <ul class="nav">
+  <li class="dropdown">
+    <a href="#"
+          class="dropdown-toggle"
+          data-toggle="dropdown">
+          Dropdown
+          <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+     <li><a href="#">Web Design</a></li>
+  <li><a href="#">Web development</a></li>
+  <li><a href="#">Wordpress Theme development</a></li>
+    </ul>
+  </li>
+</ul> *}
+<ul class="nav pull-right">
+	<li n:ifset="$headerMessage" class="important">
+		{$headerMessage}
+	</li>
+	<li n:if="$user->isLoggedIn()">
+		<span>{$user->identity->username ?: $user->identity->email}</span>
+	</li>
+	
+	<li>
+		{if !$user->isLoggedIn()}
+			<a n:href="Sign:in">Log in / Sign up</a>
+		{else}
+			<a n:href="Sign:out">Log out</a>
+		{/if}
+	</li>
+</ul>
+    </div>
+  </div>
+</div>
+	
+	<div style="width:960px;margin:60px auto;">
+		<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+		{include #content}
+		<script src="{$basePath}/js/lightbox-2.6.min.js"></script>
+	</div>
+	
+	
+
+	{block scripts}
+	<script src="{$basePath}/js/jquery.js"></script>
+	<script src="{$basePath}/js/netteForms.js"></script>
+	<script src="{$basePath}/js/main.js"></script>
+	{/block}
+</body>
+</html>

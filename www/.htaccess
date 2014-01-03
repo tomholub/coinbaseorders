@@ -1,0 +1,11 @@
+# .htaccess main domain to subdirectory redirect 
+# in case you cannot set your web host to point to www directory directly
+
+RewriteEngine on
+
+#RewriteCond %{HTTP_HOST} ^(www.)?coinbaseorders.com$ 
+RewriteCond %{REQUEST_URI} !^/www/
+# Don't change the following two lines. 
+#RewriteCond %{REQUEST_FILENAME} !-f 
+#RewriteCond %{REQUEST_FILENAME} !-d 
+RewriteRule ^(.*)$ /www/$1

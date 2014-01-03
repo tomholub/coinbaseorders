@@ -1,0 +1,88 @@
+{* This is the welcome page, you can delete it *}
+
+{block content}
+
+{if !$user->isLoggedIn()}
+	<h1>Place limit orders on your Coinbase account</h1>
+
+	<p>When price dips unexpectedly while I sleep, I want to make sure to get some discounted Bitcoins.</p>
+	
+	<p>Or sell a little when it skyrockets.</p>
+	
+	<a n:href="Sign:in" class="btn btn-success btn-large"><i class="icon-white icon-lock"></i> Sign up</a>
+	
+	<br/><br/><br/><br/><h2>Screenshot</h2>
+	<img src="img/orders-screen.png" style="width:40%" />
+	
+{elseif isset($headerMessage)}
+	{if $headerMessage->getName() == 'a' && $headerMessage->getText() == 'Connect to Coinbase'}
+		<p>Now you need to connect to Coinbase so that you can place Buy and Sell limit orders.</p>
+		{$headerMessage->setClass('btn btn-success btn-large')}
+	{/if}
+
+	{if $headerMessage->getName() == 'span'}
+		Please check your email for verification link. If you didn't get one, write me at tom@coinbaseorders.com
+	{/if}		
+		
+{else}
+	<p>You can place orders now.</p>
+	<a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'" class="btn btn-success btn-large"><i class="icon-white icon-screenshot"></i> See and place orders</a>
+
+	<br/><br/><h2>Coinbase verification policy</h2>
+
+	<ul>
+		<li>AFTER you verify your Coinbase account and place an order, you can't place a second one until the first order is completed (4-5 days)</li>
+		<li>If you have done this before on Coinbase and your account is fully established - you can place as many orders as you like</li>
+	</ul>
+	
+	<br/><h2>How often are limit orders checked</h2>
+	<p>I'm trying to find the right balance. Right now it's every 10 minutes. That's so much better than trying to check the price yourself all day.</p>
+	
+	<p>However you might miss out on things that happen really fast. If Bitcoin falls 30% and recovers in 5 minutes, you might not get your order activated.</p>
+	
+	<p>If you need a very fast response, such as checking the price every second, contact me <a href="mailto:tom@coinbaseorders.com">tom@coinbaseorders.com</a></p>	
+	
+	<br/><h2>Upcoming features</h2>
+	<ul>
+		<li>Email notifications when order is processed [January]</li>
+		<li>Weekly summary email of your active orders [January]</li>
+		<li>Set order expiration date [January]</li>
+		<li>SMS notifications [Possibly February]</li>
+		<li>Make the site mobile friendly [Depends on interest]</li>
+		<li>Android app [Depends on interest]</li>
+		<li>Have ideas? Email me <a href="mailto:tom@coinbaseorders.com">tom@coinbaseorders.com</a></li>
+	</ul>
+	
+	<br/><h2>Contribute (Code or Coins)</h2>
+	<table>
+		<tr>
+			<td width="500">
+				<p>I think Bitcoin is the most important thing to happen in next 5 years. I'll do what I can to support Bitcoin community and make things easier for everyone.</p>
+				
+				<p>Get involved in development on <a href="https://github.com/tomholub/coinbaseorders">GitHub</a>.</p>
+	
+				<p>Alternatively, please consider a small donation. Direct address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign</p>
+			</td>
+			<td width="350" height="200" style="position:absolute;"><img src="https://chart.googleapis.com/chart?cht=qr&chl=bitcoin%3A1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign&choe=UTF-8&chs=200x200" style="position:relative;top:-60px;"/></td>
+		</tr>
+	</table>
+	
+	<br/><h2>Discussion</h2>
+	<p>You can discuss ideas with the community at <a href="https://bitcointalk.org/">Bitcoin Talk Forum</a>.</p>
+	
+	
+{/if}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

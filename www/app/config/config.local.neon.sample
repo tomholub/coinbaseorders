@@ -1,0 +1,35 @@
+parameters:
+	OauthClientId: '...'
+	OauthClientSecret: '...'
+	OauthClientUrl: '...'
+	salt: '...'
+
+php:
+	date.timezone: US/Pacific
+	# zlib.output_compression: yes
+
+nette:
+	database:
+		dsn: 'mysql:host=localhost;dbname=set_here_your_database_name'
+		user: root
+		password: your_db_password
+
+	application:
+		errorPresenter: Error
+
+	session:
+		expiration: 14 days
+
+
+services:
+	authenticator: Authenticator
+	routerFactory: RouterFactory
+	router: @routerFactory::createRouter
+	database: @Nette\Database\Connection
+	orders: OrdersModel
+	logs: LogsModel
+	coinbase: CoinbaseWrapper(%OauthClientId%, %OauthClientSecret%)
+	salted: Salted(%salt%)
+
+
+factories:
