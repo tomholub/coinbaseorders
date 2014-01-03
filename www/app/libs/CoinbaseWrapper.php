@@ -57,6 +57,9 @@ class CoinbaseWrapper extends Nette\Object
 				$orderId = $this->currentOrder->order_id;
 				$this->context->logs->logFailedCoinbaseConnection($this->currentUserId, $method, 'order_id', $orderId, $result->getMessage());
 			}
+			elseif($result === NULL){
+				//todo - something went wrong. Let's just do proper Exception handling/logging
+			}
 			else{
 				$order = $this->currentOrder;
 				$pricePerCoin = number_format($result->amount/$order->amount, 2);
