@@ -138,7 +138,7 @@ class CoinbaseWrapper extends Nette\Object
 			}
 		}
 		catch (Coinbase_TokensExpiredException $tokenExpiredException){
-			$oldTokens = $this->context->authenticator->getUser($userId);
+			$oldTokens = $this->decryptTokens($this->context->authenticator->getUser($userId));
 			$newTokens = $this->coinbaseOauth->refreshTokens($oldTokens);
 			$this->context->authenticator->update($userId, $newTokens);
 			$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $newTokens);

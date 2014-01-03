@@ -34,7 +34,7 @@ class Coinbase_OAuth
 
     public function refreshTokens($oldTokens)
     {
-        return $this->getTokens($oldTokens["coinbase_refresh_token"], "coinbase_refresh_token");
+        return $this->getTokens($oldTokens["coinbase_refresh_token"], "refresh_token");
     }
 
     public function getTokens($code, $grantType='authorization_code')
@@ -44,8 +44,8 @@ class Coinbase_OAuth
         $postFields["client_id"] = $this->_clientId;
         $postFields["client_secret"] = $this->_clientSecret;
 
-        if("coinbase_refresh_token" === $grantType) {
-            $postFields["coinbase_refresh_token"] = $code;
+        if("refresh_token" === $grantType) {
+            $postFields["refresh_token"] = $code;
         } else {
             $postFields["code"] = $code;
         }
