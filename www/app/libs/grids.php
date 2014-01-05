@@ -64,8 +64,8 @@ class OrdersGrid extends GridBuilder{
 			->setClass(function($row){ return ($row['status'] == 'ACTIVE') ? "fast-edit" : 'nodisplay';});
 			
 		$this->setRowFormCallback(function($values) use ($presenter){
-			if(!preg_match('/[0-9]\.?[0-9]*/', $values['amount']) || $values['amount'] == 0){
-				$presenter->flashMessage('Amount must be a number like 0.50 and more than zero.');
+			if(!preg_match('/[0-9]\.?[0-9]*/', $values['amount']) || $values['amount'] < 0.001 || $values['amount'] > 10.000){
+				$presenter->flashMessage('Amount must be a number like 0.50, must be more than zero and maximum of 10 Bitcoins. If you need more bitcoins per transaction, write me at tom@coinbaseorders.com.');
 			}
 			elseif(!preg_match('/[0-9]\.?[0-9]*/', $values['at_price']) || $values['at_price'] == 0){
 				$presenter->flashMessage('Price per bitcoin must be a number like 0.50 and more than zero.');
