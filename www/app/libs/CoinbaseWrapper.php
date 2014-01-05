@@ -50,26 +50,36 @@ class CoinbaseWrapper extends Nette\Object
 	 * @param Exception $result
 	 */
 	public function logCall($method, $args, $result){
-		if(in_array($method, Array('getBuyPrice', 'getSellPrice'))){
+		
+		//if Exception occured - need to log exception in DB
+		if($result instanceof Exception){
+			$orderId = isset($this->currentOrder->order_id) ? $this->currentOrder->order_id : NULL;
+			$this->context->logs->logException($result, Array('order_id' => $orderId, 'loggedUser' => $this->presenter->user->id));
+			//email notification to admin
+			$message = new \Nette\Mail\Message();
+			$message->setFrom('tom@coinbaseorders.com')->addTo('tom@coinbaseorders.com')
+					->setSubject('new exception'.get_class($result))
+					->setBody($result->getMessage())
+					->send();
+		}
+		//nothing to do or log. Appropriate action taken (probably used FlashMessage to notify user)
+		elseif($result === NULL){
 			
-			if($result instanceof Exception){
-				\Nette\Diagnostics\Debugger::barDump($this->currentOrder);
-				$orderId = $this->currentOrder->order_id;
-				$this->context->logs->logFailedCoinbaseConnection($this->currentUserId, $method, 'order_id', $orderId, $result->getMessage());
-			}
-			elseif($result === NULL){
-				//todo - something went wrong. Let's just do proper Exception handling/logging
-			}
-			else{
+		}
+		//log general app usage
+		else{
+			//log price queries
+			if(in_array($method, Array('getBuyPrice', 'getSellPrice'))){
 				$order = $this->currentOrder;
 				$pricePerCoin = number_format($result->amount/$order->amount, 2);
 				$atPrice = number_format($order->at_price, 2);
 				$text = "Want to $order->action $order->amount $order->amount_currency for $$atPrice/฿. Current price is $pricePerCoin/฿ incl. fees.";
 				$this->context->logs->logActiveCoinbaseOrder($order->order_id, $method, $this->currentUserId, $text);				
 			}	
-		}
-		elseif(in_array($method, Array('buy', 'sell'))){
-			//todo - log this
+			//log bitcoin transactions
+			elseif(in_array($method, Array('buy', 'sell'))){
+				//todo - log this
+			}			
 		}
 	}
 	
@@ -152,14 +162,23 @@ class CoinbaseWrapper extends Nette\Object
 				$result = $this->callAndHandleExceptions($callbackFunction, $parameters, $userId, False);
 			}
 			else{
-				$result = NULL;
-				//todo - log error				
+				$exception = new LogMeException(Texts::get('LogMeException', 10), 10, $tokenExpiredException);
+				$exception->data = Array('userId' => $userId);
+				return $exception;
 			}
 		}
 		catch(Coinbase_ApiException $apiException){
-			$result = NULL;
-			//todo - log error
-			//Please wait until your first bitcoin purchase completes before making additional purchases., (Once your first purchase completes you can make multiple purchases at the same time.)
+			if(strpos($apiException->getMessage(), Texts::get('CoinbaseErrors', 'first_purchase')) !== false){
+				//known exception
+				$this->presenter->fleshMessage($apiException->getMessage());
+				return NULL;
+			}
+			else{
+				//unknown exception
+				$exception = new LogMeException(Texts::get('LogMeException', 12), 12, $apiException);
+				$exception->data = Array('userId' => $userId);
+				return $exception;				
+			}
 		}
 		
 		return $result;

@@ -46,14 +46,13 @@ class LogsModel extends BaseDbModel
 		));
 	}
 	
-	public function logFailedCoinbaseConnection($userId, $subtype, $relation, $relationId, $text){
+	public function logException(Exception $exception, $data = NULL){
 		$this->insert(Array(
-			'user_id' => $userId,
-			'type' => 'CoinbaseCall',
-			'subtype' => $subtype,
-			'relation' => $relation,
-			'relation_id' => $relationId,
-			'text' => $text,
+			'type' => 'Exception',
+			'subtype' => get_class($exception),
+			'text' => $exception->getCode().': '.$exception->getMessage(),
+			'input' => isset($exception->data) ? print_r($exception->data) : NULL,
+			'output' => print_r($data, true),
 		));			
 	}
 
