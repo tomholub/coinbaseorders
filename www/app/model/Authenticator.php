@@ -69,8 +69,9 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator
 	}
 	
 	public function verifyEmail($userId, $emailCode){
+		//todo - don't rely on who's logged in, just verify based on email + code
 		$userRow = $this->getUser($userId);
-		if($userRow->email_confirmation == $emailCode){
+		if($userRow && $userRow->email_confirmation == $emailCode){
 			$this->update($userId, Array('email_confirmation' => 'confirmed'));
 			return True;
 		}
