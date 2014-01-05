@@ -170,7 +170,7 @@ class CoinbaseWrapper extends Nette\Object
 		catch(Coinbase_ApiException $apiException){
 			if(strpos($apiException->getMessage(), Texts::get('CoinbaseErrors', 'first_purchase')) !== false){
 				//known exception
-				$this->presenter->fleshMessage($apiException->getMessage());
+				$this->presenter->flashMessage($apiException->getMessage());
 				return NULL;
 			}
 			else{
