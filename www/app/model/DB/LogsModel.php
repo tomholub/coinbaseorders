@@ -32,8 +32,8 @@ class LogsModel extends BaseDbModel
 	
 	public function logActiveCoinbaseOrder($orderId, $subtype, $userId, $text){
 		$this->database->table('logs')
-				->where(Array('relation' => 'order_id', 'relation_id' => $orderId, 'type' => 'CoinbaseCall', 'subtype' => $subtype, 'user_id' => $userId))
-				->update(Array('latest' => False));
+			->where(Array('relation' => 'order_id', 'relation_id' => $orderId, 'type' => 'CoinbaseCall', 'subtype' => $subtype, 'user_id' => $userId, 'latest' => True))
+			->update(Array('latest' => False));
 		
 		$this->insert(Array(
 			'user_id' => $userId,
