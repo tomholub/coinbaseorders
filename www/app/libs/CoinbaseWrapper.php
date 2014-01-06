@@ -150,20 +150,20 @@ class CoinbaseWrapper extends Nette\Object
 				$result = $this->callAndHandleExceptions($callbackFunction, $parameters, $userId, False);
 			}
 			else{
-				$exception = new LogMeException(Texts::get('LogMeException', 10), 10, $tokenExpiredException);
+				$exception = new LogMeException($this->context->texts->get('LogMeException', 10), 10, $tokenExpiredException);
 				$exception->data = Array('userId' => $userId);
 				return $exception;
 			}
 		}
 		catch(Coinbase_ApiException $apiException){
-			if(strpos($apiException->getMessage(), Texts::get('CoinbaseErrors', 'first_purchase')) !== false){
+			if(strpos($apiException->getMessage(), $this->context->texts->get('CoinbaseErrors', 'first_purchase')) !== false){
 				//known exception
 				$this->presenter->flashMessage($apiException->getMessage());
 				return NULL;
 			}
 			else{
 				//unknown exception
-				$exception = new LogMeException(Texts::get('LogMeException', 12), 12, $apiException);
+				$exception = new LogMeException($this->context->texts->get('LogMeException', 12), 12, $apiException);
 				$exception->data = Array('userId' => $userId);
 				return $exception;				
 			}

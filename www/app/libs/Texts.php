@@ -12,13 +12,9 @@
  */
 class Texts extends \Nette\Object{
 	
-	public $data = Array();
+	private $data = Array();
 	
-	public static function get($category, $key){
-		return $this->data[$category][$key];
-	}
-	
-	public static function init(){
+	public function __construct() {
 		$data['LogMeException'] = Array(
 			10	=> 'Unable to recover expired Coinbase token',
 			11	=> 'Unable to connect to Coinbase',
@@ -29,4 +25,7 @@ class Texts extends \Nette\Object{
 		);
 	}
 	
-} Texts::init();
+	function get($category, $key){
+		return $this->data[$category][$key];
+	}	
+}

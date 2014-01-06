@@ -31,6 +31,7 @@ services:
 	coinbase: CoinbaseWrapper(%OauthClientId%, %OauthClientSecret%)
 	salted: Salted(%salt%)
 	values: ValuesModel
+	texts: Texts
 
 
 factories:
