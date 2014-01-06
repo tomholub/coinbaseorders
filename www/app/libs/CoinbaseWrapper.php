@@ -64,14 +64,6 @@ class CoinbaseWrapper extends Nette\Object
 					->setBody($result->getMessage())
 					->send();
 		}
-		//nothing to do or log. Appropriate action taken (probably used FlashMessage to notify user)
-		elseif($result === NULL){
-			
-		}
-		//log general app usage
-		else{
-			//such as successful price queries, buys, sells. if needed
-		}
 	}
 	
 	/**
