@@ -22,6 +22,8 @@ class HomepagePresenter extends BasePresenter
 				$this->redirect($this->home);
 			}
 		}
+		
+		$this->template->lastBuyPrice = $this->context->values->get('coinbase', 'buyPrice');
 	}
 	
 	

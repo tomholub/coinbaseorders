@@ -70,6 +70,29 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
+
+
+--
+-- Table structure for table `values`
+--
+
+DROP TABLE IF EXISTS `values`;
+CREATE TABLE IF NOT EXISTS `values` (
+  `group` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `value` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `values`
+--
+
+INSERT INTO `values` (`group`, `name`, `value`, `updated`) VALUES
+('coinbase', 'buyPrice', NULL, '2014-01-01 00:00:00'),
+('coinbase', 'sellPrice', NULL, '2014-01-01 00:00:00');
+
+
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

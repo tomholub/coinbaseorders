@@ -30,6 +30,7 @@ services:
 	logs: LogsModel
 	coinbase: CoinbaseWrapper(%OauthClientId%, %OauthClientSecret%)
 	salted: Salted(%salt%)
+	values: ValuesModel
 
 
 factories:

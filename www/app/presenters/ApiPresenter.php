@@ -17,11 +17,13 @@ class ApiPresenter extends BasePresenter {
 		$currentBuyPrice = $this->context->coinbase->getBuyPrice();
 		if(!empty($currentBuyPrice->subtotal->amount)){
 			$this->checkBuyOrders($currentBuyPrice->subtotal->amount);
+			$this->context->values->update('coinbase', 'buyPrice', (string)$currentBuyPrice->subtotal->amount);
 		}
 		
 		$currentSellPrice = $this->context->coinbase->getSellPrice();
 		if(!empty($currentSellPrice->subtotal->amount)){
 			$this->checkSellOrders($currentSellPrice->subtotal->amount);
+			$this->context->values->update('coinbase', 'sellPrice', (string)$currentSellPrice->subtotal->amount);
 		}		
 	}
 	
