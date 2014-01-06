@@ -8,12 +8,13 @@ class CoinbaseWrapper extends Nette\Object
 	
 	/** @var array */
 	private $userCoinbases = Array();
+	const ANONYMOUS = -1;
 	
 	private $presenter;
 	private $context;
 	
-	private $currentUserId;
-	private $currentOrder;
+	private $currentUserId = self::ANONYMOUS;
+	private $currentOrder = NULL;
 	
 	
 	/**
@@ -36,7 +37,7 @@ class CoinbaseWrapper extends Nette\Object
 	 * @param array $args
 	 */
     public function __call($method, $args) {
-        $result = $this->callAndHandleExceptions($method, $args, $this->currentUserId);
+		$result = $this->callAndHandleExceptions($method, $args, $this->currentUserId);        
 		$this->logCall($method, $args, $result);
 		return ($result instanceof Exception) ? NULL : $result;
     }
@@ -129,12 +130,17 @@ class CoinbaseWrapper extends Nette\Object
 	 * 
 	 */
 	private function callAndHandleExceptions( $callbackFunction, array $parameters, $userId, $tryAgain = True){
-		//create coinbase instance based on user
+		
+		//user-specific api call. Create coinbase instance based on user.
 		if(!isset($this->userCoinbases[$userId])){
-			$tokens = $this->decryptTokens($this->context->authenticator->getUser($userId));
+			if($userId != self::ANONYMOUS){
+				$tokens = $this->decryptTokens($this->context->authenticator->getUser($userId));
+			}
+			else{
+				$tokens = NULL;
+			}
 			$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $tokens);
 		}
-		
 		$coinbaseCallback = callback($this->userCoinbases[$userId], $callbackFunction);
 		
 		try{
