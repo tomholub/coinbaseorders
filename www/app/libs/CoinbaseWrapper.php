@@ -39,6 +39,7 @@ class CoinbaseWrapper extends Nette\Object
     public function __call($method, $args) {
 		$result = $this->callAndHandleExceptions($method, $args, $this->currentUserId);        
 		$this->logCall($method, $args, $result);
+		$this->currentUserId = self::ANONYMOUS; //reset USER ID for next call
 		return ($result instanceof Exception) ? NULL : $result;
     }
 	
@@ -69,18 +70,7 @@ class CoinbaseWrapper extends Nette\Object
 		}
 		//log general app usage
 		else{
-			//log price queries
-			if(in_array($method, Array('getBuyPrice', 'getSellPrice'))){
-				$order = $this->currentOrder;
-				$pricePerCoin = number_format($result->amount/$order->amount, 2);
-				$atPrice = number_format($order->at_price, 2);
-				$text = "Want to $order->action $order->amount $order->amount_currency for $$atPrice/฿. Current price is $pricePerCoin/฿ incl. fees.";
-				$this->context->logs->logActiveCoinbaseOrder($order->order_id, $method, $this->currentUserId, $text);				
-			}	
-			//log bitcoin transactions
-			elseif(in_array($method, Array('buy', 'sell'))){
-				//todo - log this
-			}			
+			//such as successful price queries, buys, sells. if needed
 		}
 	}
 	
