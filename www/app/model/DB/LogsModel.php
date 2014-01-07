@@ -47,13 +47,18 @@ class LogsModel extends BaseDbModel
 	}
 	
 	public function logException(Exception $exception, $data = NULL){
+		$text = $exception->getCode().': '.$exception->getMessage();
+		if($exception->getPrevious() instanceof Exception){
+			$text .= ' /// '.$exception->getPrevious()->getCode() . ': '. $exception->getPrevious()->getMessage();
+		}
+		
 		$this->insert(Array(
 			'type' => 'Exception',
 			'subtype' => get_class($exception),
-			'text' => $exception->getCode().': '.$exception->getMessage(),
+			'text' => $text,
 			'input' => isset($exception->data) ? print_r($exception->data) : NULL,
 			'output' => print_r($data, true),
-		));			
+		));
 	}
 
 }
