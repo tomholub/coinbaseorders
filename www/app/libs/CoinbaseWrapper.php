@@ -1,22 +1,20 @@
 <?php
 
+class CoinbaseWrapper extends Nette\Object {
 
-class CoinbaseWrapper extends Nette\Object
-{
 	/** @var Coinbase_OAuth */
 	protected $coinbaseOauth;
-	
+
 	/** @var array */
 	private $userCoinbases = Array();
+
 	const ANONYMOUS = -1;
-	
+
 	private $presenter;
 	private $context;
-	
 	private $currentUserId = self::ANONYMOUS;
 	private $currentOrder = NULL;
-	
-	
+
 	/**
 	 * Is called automatically in app configurator
 	 * 
@@ -28,7 +26,7 @@ class CoinbaseWrapper extends Nette\Object
 		$this->context = $this->presenter->context;
 		$this->coinbaseOauth = new Coinbase_OAuth($OauthClientId, $OauthClientSecret, $this->presenter->link('//default'));
 	}
-	
+
 	/**
 	 * function overload to call Coinbase class functions
 	 * used for easy logging and exception handling
@@ -36,14 +34,13 @@ class CoinbaseWrapper extends Nette\Object
 	 * @param string $method
 	 * @param array $args
 	 */
-    public function __call($method, $args) {
-		$result = $this->callAndHandleExceptions($method, $args, $this->currentUserId);        
+	public function __call($method, $args) {
+		$result = $this->callAndHandleExceptions($method, $args, $this->currentUserId);
 		$this->logCall($method, $args, $result);
 		$this->currentUserId = self::ANONYMOUS; //reset USER ID for next call
 		return ($result instanceof Exception) ? NULL : $result;
-    }
-	
-	
+	}
+
 	/**
 	 * log info about each call into our DB
 	 * 
@@ -51,38 +48,38 @@ class CoinbaseWrapper extends Nette\Object
 	 * @param array $args
 	 * @param Exception $result
 	 */
-	public function logCall($method, $args, $result){
-		
+	public function logCall($method, $args, $result) {
+
 		//if Exception occured - need to log exception in DB
-		if($result instanceof Exception){
+		if ($result instanceof Exception) {
 			$orderId = isset($this->currentOrder->order_id) ? $this->currentOrder->order_id : NULL;
 			$this->context->logs->logException($result, Array('order_id' => $orderId, 'loggedUser' => $this->presenter->user->id));
 			//email notification to admin
 			$message = new \Nette\Mail\Message();
 			$message->setFrom('tom@coinbaseorders.com')->addTo('tom@coinbaseorders.com')
-					->setSubject('new exception'.get_class($result))
+					->setSubject('new exception' . get_class($result))
 					->setBody($result->getMessage())
 					->send();
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param mixed $userId
 	 * @return \CoinbaseWrapper
 	 */
-	public function user($userId){
+	public function user($userId) {
 		$this->currentUserId = $userId;
 		return $this;
 	}
-	
+
 	/**
 	 * save related order info
 	 * 
 	 * @param mixed $order
 	 * @return \CoinbaseWrapper
 	 */
-	public function order($order){
+	public function order($order) {
 		$this->currentOrder = $order;
 		return $this;
 	}
@@ -92,12 +89,11 @@ class CoinbaseWrapper extends Nette\Object
 	 * 
 	 * @param string $code
 	 */
-	public function getAndSaveTokens($code){
+	public function getAndSaveTokens($code) {
 		$tokens = $this->coinbaseOauth->getTokens($code);
 		$this->context->authenticator->update($this->currentUserId, $tokens);
 	}
 
-	
 	/**
 	 * 
 	 * Handles API call exceptions. 
@@ -111,86 +107,79 @@ class CoinbaseWrapper extends Nette\Object
 	 * @param bool $tryAgain
 	 * 
 	 */
-	private function callAndHandleExceptions( $callbackFunction, array $parameters, $userId, $tryAgain = True){
-		
+	private function callAndHandleExceptions($callbackFunction, array $parameters, $userId, $tryAgain = True) {
+
 		//user-specific api call. Create coinbase instance based on user.
-		if(!isset($this->userCoinbases[$userId])){
-			if($userId != self::ANONYMOUS){
+		if (!isset($this->userCoinbases[$userId])) {
+			if ($userId != self::ANONYMOUS) {
 				$tokens = $this->decryptTokens($this->context->authenticator->getUser($userId));
-			}
-			else{
+			} else {
 				$tokens = NULL;
 			}
 			$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $tokens);
 		}
 		$coinbaseCallback = callback($this->userCoinbases[$userId], $callbackFunction);
-		
-		try{
+
+		try {
 			$result = $coinbaseCallback->invokeArgs($parameters);
-		}
-		catch(Coinbase_ConnectionException $connectionException){
+		} catch (Coinbase_ConnectionException $connectionException) {
 			//recursive callback. Only if this was the first try
-			if($tryAgain){
+			if ($tryAgain) {
 				//make sure next time it will not go recursive if it fails again
 				$result = $this->callAndHandleExceptions($callbackFunction, $parameters, $userId, False);
-			}
-			else{
+			} else {
 				return $connectionException;
 			}
-		}
-		catch (Coinbase_TokensExpiredException $tokenExpiredException){
+		} catch (Coinbase_TokensExpiredException $tokenExpiredException) {
 			$oldTokens = $this->decryptTokens($this->context->authenticator->getUser($userId));
 			$newTokens = $this->coinbaseOauth->refreshTokens($oldTokens);
 			$this->context->authenticator->update($userId, $newTokens);
 			$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $newTokens);
-			
+
 			//recursive callback. Only if this was the first try
-			if($tryAgain){
+			if ($tryAgain) {
 				//make sure next time it will not go recursive if it fails again
 				$result = $this->callAndHandleExceptions($callbackFunction, $parameters, $userId, False);
-			}
-			else{
+			} else {
 				$exception = new LogMeException($this->context->texts->get('LogMeException', 10), 10, $tokenExpiredException);
 				$exception->data = Array('userId' => $userId);
 				return $exception;
 			}
-		}
-		catch(Coinbase_ApiException $apiException){
-			if(strpos($apiException->getMessage(), $this->context->texts->get('CoinbaseErrors', 'first_purchase')) !== false){
+		} catch (Coinbase_ApiException $apiException) {
+			if (strpos($apiException->getMessage(), $this->context->texts->get('CoinbaseErrors', 'first_purchase')) !== false) {
 				//known exception
 				$this->presenter->flashMessage($apiException->getMessage());
 				return NULL;
-			}
-			else{
+			} else {
 				//unknown exception
 				$exception = new LogMeException($this->context->texts->get('LogMeException', 12), 12, $apiException);
 				$exception->data = Array('userId' => $userId);
-				return $exception;				
+				return $exception;
 			}
 		}
-		
+
 		return $result;
 	}
-	
+
 	/**
 	 * 
 	 * @return string
 	 */
-	public function getConnectUrl(){
+	public function getConnectUrl() {
 		return $this->coinbaseOauth->createAuthorizeUrl("balance", "buy", "sell", "transfers");
 	}
-	
+
 	/**
 	 * 
 	 * @param array $tokens
 	 * @return array
 	 */
-	private function decryptTokens($tokens){
+	private function decryptTokens($tokens) {
 		return Array(
 			'coinbase_refresh_token' => $this->context->salted->decrypt($tokens['coinbase_refresh_token']),
 			'coinbase_access_token' => $this->context->salted->decrypt($tokens['coinbase_access_token']),
 			'coinbase_expire_time' => $tokens['coinbase_expire_time'],
 		);
 	}
-	
+
 }

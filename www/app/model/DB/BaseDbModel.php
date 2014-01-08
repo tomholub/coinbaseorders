@@ -5,8 +5,6 @@
  * and open the template in the editor.
  */
 
-abstract class BaseDbModel extends Nette\Object{
-//	public function __construct(){
-//		
-//	}
+abstract class BaseDbModel extends Nette\Object {
+	
 }

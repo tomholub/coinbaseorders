@@ -1,7 +1,7 @@
 <?php
 
-class LogMeException extends Exception{
-	
+class LogMeException extends Exception {
+
 	public $data = Array();
-	
+
 }

@@ -14,15 +14,14 @@ $configurator->setTempDirectory(__DIR__ . '/../temp');
 
 // Enable RobotLoader - this will load all classes automatically
 $configurator->createRobotLoader()
-	->addDirectory(__DIR__)
-	->addDirectory(__DIR__ . '/../libs')
-	->register();
+		->addDirectory(__DIR__)
+		->addDirectory(__DIR__ . '/../libs')
+		->register();
 
 // Create Dependency Injection container from config.neon file
-if(file_exists( __DIR__ . "/../PRODUCTION"))  { 
+if (file_exists(__DIR__ . "/../PRODUCTION")) {
 	$configurator->addConfig(__DIR__ . '/config/config.neon');
-}
-else{
+} else {
 	$configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE); // none section
 }
 $container = $configurator->createContainer();
