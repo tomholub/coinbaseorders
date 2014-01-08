@@ -44,6 +44,7 @@
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
       <li n:if="$user->isLoggedIn()"><a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'">Orders</a></li>
+	  <li><a>buy: ${$latestPrice['buy']['value']} / sell: ${$latestPrice['sell']['value']}</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
 		<li n:ifset="$headerMessage" class="important">

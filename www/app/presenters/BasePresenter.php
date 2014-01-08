@@ -22,6 +22,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 			die('Ooops! We are having some difficulties. It says "' . $e->getMessage() . '"<br/><br/><b>Please press F-5 button to refresh the page</b>. If this doesn\'t go away, please write me at tom@coinbaseorders.com');
 		}
 
+		$this->template->latestPrice = Array(
+			'buy' => $this->context->values->get('coinbase', 'buyPrice'),
+			'sell' => $this->context->values->get('coinbase', 'sellPrice'),
+		);
+		
 		if ($this->getParam('code') != NULL && $this->user->isLoggedIn()) {
 			$this->context->coinbase->user($this->user->id)->getAndSaveTokens($this->getParam('code'));
 			$this->redirect($this->home);
