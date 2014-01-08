@@ -12,7 +12,7 @@
 	<a n:href="Sign:in" class="btn btn-success btn-large"><i class="icon-white icon-lock"></i> Sign up</a>
 	
 	<br/><br/><br/><br/><h2>Screenshot</h2>
-	<img src="img/orders-screen.png" style="width:40%" />
+	<img src="img/orders-screen.png" style="width:40%" class="img-responsive"  />
 	
 {elseif isset($headerMessage)}
 	{if $headerMessage->getName() == 'a' && $headerMessage->getText() == 'Connect to Coinbase'}
@@ -51,18 +51,12 @@
 	</ul>
 	
 	<br/><h2>Contribute (Code or Coins)</h2>
-	<table>
-		<tr>
-			<td width="500">
-				<p>I think Bitcoin is the most important thing to happen in next 5 years. I'll do what I can to support Bitcoin community and make things easier for everyone.</p>
-				
-				<p>Get involved in development on <a href="https://github.com/tomholub/coinbaseorders">GitHub</a>.</p>
-	
-				<p>Alternatively, please consider a small donation. Direct address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign</p>
-			</td>
-			<td width="350" height="200" style="position:absolute;"><img src="https://chart.googleapis.com/chart?cht=qr&chl=bitcoin%3A1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign&choe=UTF-8&chs=200x200" style="position:relative;top:-60px;"/></td>
-		</tr>
-	</table>
+	<p>I think Bitcoin is the most important thing to happen in next 5 years. I'll do what I can to support Bitcoin community and make things easier for everyone.</p>
+
+	<p>Get involved in development on <a href="https://github.com/tomholub/coinbaseorders">GitHub</a>.</p>
+
+	<p>Alternatively, please consider a small donation. Direct address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign</p>
+	<img src="https://chart.googleapis.com/chart?cht=qr&chl=bitcoin%3A1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign&choe=UTF-8&chs=200x200"/>
 	
 	<br/><h2>Discussion</h2>
 	<p>You can discuss ideas with the community at <a href="https://bitcointalk.org/index.php?topic=389638.0">Bitcoin Talk Forum</a>.</p>
