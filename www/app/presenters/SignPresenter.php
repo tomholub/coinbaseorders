@@ -57,7 +57,7 @@ class SignPresenter extends BasePresenter {
 
 		$form->addPassword('password', 'New Password:')
 				->setRequired('Please enter your new password.')
-				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 8 to 500 characters long.', Array(6, 500));
+				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 6 to 500 characters long.', Array(6, 500));
 
 		$form->addPassword('password2', 'New Password:')
 				->setRequired('Please enter your new password.')
@@ -109,5 +109,47 @@ class SignPresenter extends BasePresenter {
 		}
 		$this->redirect($this->home);
 	}
+	
+	public function renderProfile(){
+		if (!$this->user->isLoggedIn()) {
+			$this->redirect('Sign:in');
+		}
+	}
+	
+	/**
+	 * Sign-in form factory.
+	 * @return Nette\Application\UI\Form
+	 */
+	protected function createComponentProfileForm() {
+		$form = new UI\Form;
 
+		$form->addText('username', 'How should I call you?')
+			->setDefaultValue($this->user->identity->username);
+
+		$form->addPassword('password', 'Set New Password:')
+			->addCondition(\Nette\Forms\Form::FILLED)
+				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 6 to 500 characters long.', Array(6, 500));
+
+		$form->addPassword('password2', 'Verify Password:')
+			->addConditionOn($form['password'], Nette\Forms\Form::FILLED)
+				->addRule(Nette\Forms\Form::FILLED, 'Please verify your new password.')
+				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);
+		
+		$form->addSubmit('send', 'Update');
+
+		$form->onSuccess[] = $this->profileFormSucceeded;
+		return $form;
+	}
+
+	public function profileFormSucceeded($form) {
+		$values = $form->getValues();
+
+		$updateValues = Array('username' => $values['username']);
+		if (!empty($values['password'])) {
+			$updateValues['password'] = $this->context->salted->hash($values['password']);
+		}
+		$this->context->authenticator->update($this->user->id, $updateValues);
+		$this->flashMessage('Profile updated').
+		$this->redirect('Sign:profile');
+	}	
 }
