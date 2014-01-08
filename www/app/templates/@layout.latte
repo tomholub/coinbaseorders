@@ -37,14 +37,14 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#">Coinbase Limit Orders</a>
+    <a class="navbar-brand" n:href="Homepage:default">Coinbase Limit Orders</a>
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
       <li n:if="$user->isLoggedIn()"><a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'">Orders</a></li>
-	  <li><a>buy: ${$latestPrice['buy']['value']} / sell: ${$latestPrice['sell']['value']}</a></li>
+	  <li><a><span style="color:#3A3;display:inline;">Buy ${$latestPrice['buy']['value']|number:2}</span><span style="color:#A33;display:inline;">Sell ${$latestPrice['sell']['value']|number:2}</span></a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
 		<li n:ifset="$headerMessage" class="important">
