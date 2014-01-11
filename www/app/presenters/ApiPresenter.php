@@ -8,7 +8,11 @@
 class ApiPresenter extends BasePresenter {
 
 	public function renderCron() {
-		$this->checkActiveOrders();
+		$initialTime = time();		
+		//runs repeatedly for 55 seconds
+		while(time() - $initialTime < 55){
+			$this->checkActiveOrders();
+		}
 	}
 
 	private function checkActiveOrders() {
