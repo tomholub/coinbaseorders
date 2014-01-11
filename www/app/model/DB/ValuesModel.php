@@ -18,7 +18,7 @@ class ValuesModel extends BaseDbModel {
 
 	public function update($group, $name, $newValue) {
 		$this->database->table('values')->where(Array('group' => $group, 'name' => $name))
-				->update(Array('value' => $newValue));
+				->update(Array('value' => $newValue, 'updated' => NULL));
 	}
 
 	/** @return Nette\Database\Table\ActiveRow */
