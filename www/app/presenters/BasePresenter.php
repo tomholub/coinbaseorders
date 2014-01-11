@@ -32,6 +32,12 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 			$this->redirect($this->home);
 		}
 	}
+	
+	public function handleUpdateCurrentPrice(){
+		$this->payload->currentBuyPrice = 'Buy $'.number_format($this->context->values->get('coinbase', 'buyPrice')->value, 2);
+		$this->payload->currentSellPrice = 'Sell $'.number_format($this->context->values->get('coinbase', 'sellPrice')->value, 2);
+		$this->sendPayload();
+	}
 
 	protected function beforeRender() {
 		parent::beforeRender();

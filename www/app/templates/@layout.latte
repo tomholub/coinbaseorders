@@ -44,7 +44,17 @@
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
       <li n:if="$user->isLoggedIn()"><a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'">Orders</a></li>
-	  <li><a><span style="color:#3A3;display:inline;">Buy ${$latestPrice['buy']['value']|number:2}</span><span style="color:#A33;display:inline;">Sell ${$latestPrice['sell']['value']|number:2}</span></a></li>
+	  <li><a>
+				<span style="color:#3A3;display:inline;" id="currentBuyPrice">Buy ${$latestPrice['buy']['value']|number:2}</span><span style="color:#A33;display:inline;" id="currentSellPrice">Sell ${$latestPrice['sell']['value']|number:2}</span>
+				<script> //refresh prices in header every 2 seconds
+					window.setInterval(function(){
+						$.getJSON({link updateCurrentPrice!}, null, function(payload) { 
+							$('#currentBuyPrice').text(payload.currentBuyPrice);
+							$('#currentSellPrice').text(payload.currentSellPrice);
+						});
+					}, 2000);
+				</script>
+		  </a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
 		<li n:ifset="$headerMessage" class="important">
