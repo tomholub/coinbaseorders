@@ -87,8 +87,8 @@ class SignPresenter extends BasePresenter {
 
 			$verificationLink = $this->link("//Sign:verifyEmail", Array('emailCode' => $this->user->identity->email_confirmation));
 			$email = new Nette\Mail\Message();
-			$email->setFrom('tom@coinbaseorders.com')->addTo($values['email'])
-					->setSubject('Coinbase Limit Orders: Verify your email address')
+			$email->setFrom('tom@cointurtle.com')->addTo($values['email'])
+					->setSubject('Coin Turtle: Verify your email address')
 					->setHtmlBody('Thanks for registering! ' . \Nette\Utils\Html::el('a')->href($verificationLink)->setText('Click here to verify email') . " alternatively copy & paste this link into your browser: $verificationLink")->send();
 
 			$this->redirect('Homepage:default');
