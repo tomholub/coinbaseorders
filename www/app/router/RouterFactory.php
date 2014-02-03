@@ -18,5 +18,4 @@ class RouterFactory {
 		return $router;
 //		return new SimpleRouter('Homepage:default');	
 	}
-
 }
