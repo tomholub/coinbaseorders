@@ -15,7 +15,7 @@ class CoinbasePrice extends \Nette\Object{
 		if(isset($decoded->subtotal->amount) && $decoded->subtotal->amount > 0){
 			return $decoded->subtotal->amount;
 		}
-		throw new Exception('Not able to fetch Buy price');
+		throw new Coinbase_ConnectionException('Not able to fetch Buy price');
 	}
 	
 	public function getSellPrice($quantity = 1){
@@ -24,6 +24,6 @@ class CoinbasePrice extends \Nette\Object{
 		if(isset($decoded->subtotal->amount) && $decoded->subtotal->amount > 0){
 			return $decoded->subtotal->amount;
 		}
-		throw new Exception('Not able to fetch Sell price');
+		throw new Coinbase_ConnectionException('Not able to fetch Sell price');
 	}	
 }
