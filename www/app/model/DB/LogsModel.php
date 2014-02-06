@@ -51,7 +51,7 @@ class LogsModel extends BaseDbModel {
 			'type' => 'Exception',
 			'subtype' => get_class($exception),
 			'text' => $text,
-			'input' => isset($exception->data) ? print_r($exception->data) : NULL,
+			'input' => isset($exception->data) ? print_r($exception->data, true) : NULL,
 			'output' => print_r($data, true),
 		));
 	}

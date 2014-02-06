@@ -12,22 +12,23 @@ class ApiPresenter extends BasePresenter {
 		//runs repeatedly for 55 seconds
 		while(time() - $initialTime < 55){
 			$this->checkActiveOrders();
+			sleep(3);
 		}
 	}
 
 	private function checkActiveOrders() {
 		$this->context->orders->cancelExpired();
 
-		$currentBuyPrice = $this->context->coinbase->getBuyPrice();
-		if (!empty($currentBuyPrice->subtotal->amount)) {
-			$this->checkBuyOrders($currentBuyPrice->subtotal->amount);
-			$this->context->values->update('coinbase', 'buyPrice', (string) $currentBuyPrice->subtotal->amount);
+		$currentBuyPrice = $this->context->coinbasePrice->getBuyPrice();
+		if (!empty($currentBuyPrice)) {
+			$this->checkBuyOrders($currentBuyPrice);
+			$this->context->values->update('coinbase', 'buyPrice', (string) $currentBuyPrice);
 		}
 
-		$currentSellPrice = $this->context->coinbase->getSellPrice();
-		if (!empty($currentSellPrice->subtotal->amount)) {
-			$this->checkSellOrders($currentSellPrice->subtotal->amount);
-			$this->context->values->update('coinbase', 'sellPrice', (string) $currentSellPrice->subtotal->amount);
+		$currentSellPrice = $this->context->coinbasePrice->getSellPrice();
+		if (!empty($currentSellPrice)) {
+			$this->checkSellOrders($currentSellPrice);
+			$this->context->values->update('coinbase', 'sellPrice', (string) $currentSellPrice);
 		}
 	}
 
