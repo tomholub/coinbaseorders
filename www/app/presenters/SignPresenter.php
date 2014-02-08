@@ -42,7 +42,7 @@ class SignPresenter extends BasePresenter {
 			$this->redirect('Homepage:default');
 		} catch (Nette\Security\AuthenticationException $e) {
 			$resetLink = $this->link('sendResetEmail!', Array('email' => $values->email));
-			$this->flashMessage($e->getMessage()." You can <a href=\"$resetLink\">reset your password</a>");
+			$this->flashMessage($e->getMessage().($e->getCode() == Authenticator::INVALID_CREDENTIAL ? " You can <a href=\"$resetLink\">reset your password</a>" : ''));
 		}
 	}
 
