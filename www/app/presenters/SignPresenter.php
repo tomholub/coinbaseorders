@@ -41,7 +41,8 @@ class SignPresenter extends BasePresenter {
 			$this->getUser()->login($values->email, $values->password);
 			$this->redirect('Homepage:default');
 		} catch (Nette\Security\AuthenticationException $e) {
-			$form->addError($e->getMessage());
+			$resetLink = $this->link('sendResetEmail!', Array('email' => $values->email));
+			$this->flashMessage($e->getMessage()." You can <a href=\"$resetLink\">reset your password</a>");
 		}
 	}
 
@@ -87,8 +88,8 @@ class SignPresenter extends BasePresenter {
 
 			$verificationLink = $this->link("//Sign:verifyEmail", Array('emailCode' => $this->user->identity->email_confirmation));
 			$email = new Nette\Mail\Message();
-			$email->setFrom('tom@cointurtle.com')->addTo($values['email'])
-					->setSubject('Coin Turtle: Verify your email address')
+			$email->setFrom('tom@coinbaseorders.com')->addTo($values['email'])
+					->setSubject('Coinbase Orders: Verify your email address')
 					->setHtmlBody('Thanks for registering! ' . \Nette\Utils\Html::el('a')->href($verificationLink)->setText('Click here to verify email') . " alternatively copy & paste this link into your browser: $verificationLink")->send();
 
 			$this->redirect('Homepage:default');
@@ -151,5 +152,62 @@ class SignPresenter extends BasePresenter {
 		$this->context->authenticator->update($this->user->id, $updateValues);
 		$this->flashMessage('Profile updated').
 		$this->redirect('Sign:profile');
+	}	
+	
+	public function handleSendResetEmail($email){
+		if($userId = $this->context->authenticator->getUserIdByEmail($email)){
+			$randomHash = $this->context->authenticator->setRandomHash($userId);
+			$link = $this->link("//Sign:resetPassword", Array('id' => $userId, 'randomHash' => $randomHash));
+			new SendEmail($email, "Reset your password", "Please follow this link to reset your password: <a href=\"$link\">$link</a>");
+			$this->flashMessage("Reset link was sent to $email", "success");
+			$this->redirect($this->home);
+		}
+		else{
+			$this->flashMessage("This email is not registered", "error");
+			$this->redirect('Sign:in');
+		}
+	}
+	
+	public function actionResetPassword($id, $randomHash){
+		$this->template->verificationSuccess = $this->context->authenticator->verifyRandomHash($id, $randomHash);
+	}
+	
+	/**
+	 * Sign-in form factory.
+	 * @return Nette\Application\UI\Form
+	 */
+	protected function createComponentResetPasswordForm() {
+		$form = new UI\Form;
+
+		$form->addPassword('password', 'New Password:')
+				->setRequired('Please enter your new password.')
+				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 6 to 500 characters long.', Array(6, 500));
+
+		$form->addPassword('password2', 'New Password Again:')
+				->setRequired('Please enter your new password.')
+				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);;
+
+		$form->addHidden('randomHash', $this->presenter->getParam('randomHash'));
+		$form->addHidden('userId', $this->presenter->getParam('id'));
+				
+		$form->addSubmit('submit', 'Reset password');
+
+		$form->onSuccess[] = $this->resetPasswordFormSucceeded;
+		return $form;
+	}
+
+	public function resetPasswordFormSucceeded($form) {
+		$values = $form->getValues();
+
+		if($user = $this->context->authenticator->resetPassword($values->userId, $values->randomHash, $values->password)){
+			$this->getUser()->login($user->email, $values->password);
+			new SendEmail($user->email, 'Coinbase Orders: Password was reset', 'Your password was succesfuly reset');
+			$this->flashMessage("Password succesfuly reset.", 'success');
+			$this->redirect($this->home);
+		}
+		else{
+			$this->flashMessage("Could not verify password reset.", 'error');
+			$this->redirect('Sign:in');
+		}
 	}	
 }

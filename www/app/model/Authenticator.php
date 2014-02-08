@@ -96,4 +96,32 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator {
 		return $this->database->table(self::TABLE_NAME)->get($userId);
 	}
 
+	public function getUserIdByEmail($email){
+		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_EMAIL, $email)->fetch();
+		if($user){
+			return $user->user_id;
+		}
+	}
+	
+	public function setRandomHash($userId){
+		$randomHash = (string)$this->context->salted->hash(time().  rand(0, 10000000).$userId);
+		$this->update($userId, Array('random_hash' => $randomHash));
+		return $randomHash;
+	}
+	
+	public function verifyRandomHash($userId, $randomHash){
+		$user = $this->getUser($userId);
+		return ($randomHash && $user && $user->random_hash == $randomHash);
+	}
+		
+	public function resetPassword($userId, $randomHash, $newPassword){
+		if($this->verifyRandomHash($userId, $randomHash)){
+			$this->update($userId, Array(
+				'random_hash' => NULL,
+				'password' => $this->context->salted->hash($newPassword),
+			));
+			return $this->getUser($userId);
+		}
+		return False;
+	}
 }

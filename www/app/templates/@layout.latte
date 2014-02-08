@@ -81,7 +81,7 @@
 </nav>
 	
 	<div id="content">
-		<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
+		<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{!$flash->message}</div>
 		{include #content}
 		<script src="{$basePath}/js/lightbox-2.6.min.js"></script>
 	</div>
