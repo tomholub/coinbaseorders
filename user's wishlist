@@ -1,0 +1,5 @@
+Please add the following features
+- 0 [easy] warn if the user wants to place a buy order at a higher price than current, or a sell order at a lower price than current (fool proof)
+- 1 [hard] store and graph coinbase prices for the past few hours/days/weeks, so user can do a quick "techical analysis" before adding/removing limit orders. The chats conibase currently offers are not good for mothly trends, not hourly trends: https://coinbase.com/charts
+Thanks
+CryptoCoinUser
