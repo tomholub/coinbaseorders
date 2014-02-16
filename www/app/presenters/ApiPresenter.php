@@ -48,7 +48,7 @@ class ApiPresenter extends BasePresenter {
 				$this->context->orders->findAll()->get($order->order_id)->update(Array('status' => 'EXECUTED')); //Update order status
 				
 				$user = $this->context->authenticator->getUser($order->user_id);
-							new SendEmail($user->email, 'You just bought Bitcoin using limit order on Coinbase!', 'Hi there!<br/><br/>The system just executed your order to buy Bitcoin. You can check the details at <a href="http://coinbaseorders.com/">http://coinbaseorders.com/</a>.<br/><br/>Coinbase Orders is a free service. Please consider a small donation, others have donated too. The donation address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign, alternatively <a href="http://coinbaseorders.com/homepage/donate">click here to get donation QR code</a>.<br/><br/>I appriciate your help!<br/><br/>Tom');				
+				new SendEmail($user->email, 'You just bought Bitcoin using limit order on Coinbase!', 'Hi there!<br/><br/>The system just executed your order to buy Bitcoin. You can check the details at <a href="http://coinbaseorders.com/">http://coinbaseorders.com/</a>.<br/><br/>Coinbase Orders is a free service. Please consider a small donation, others have donated too. The donation address is 13ejFczTyMsdZQHkrfVEfiGY8RLD2rDs9i, alternatively <a href="http://coinbaseorders.com/homepage/donate">click here to get donation QR code</a>.<br/><br/>I appriciate your help!<br/><br/>Tom');				
 			}
 		}
 	}
@@ -62,7 +62,7 @@ class ApiPresenter extends BasePresenter {
 				$this->context->orders->findAll()->get($order->order_id)->update(Array('status' => 'EXECUTED')); //Update order status
 				
 				$user = $this->context->authenticator->getUser($order->user_id);
-				new SendEmail($user->email, 'You just sold Bitcoin using limit order on Coinbase!', 'Hi there!<br/><br/>The system just executed your order to buy Bitcoin. You can check the details at <a href="http://coinbaseorders.com/">http://coinbaseorders.com/</a>.<br/><br/>Coinbase Orders is a free service. Please consider a small donation, others have donated too. The donation address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign, alternatively <a href="http://coinbaseorders.com/homepage/donate">click here to get donation QR code</a>.<br/><br/>I appriciate your help!<br/><br/>Tom');
+				new SendEmail($user->email, 'You just sold Bitcoin using limit order on Coinbase!', 'Hi there!<br/><br/>The system just executed your order to buy Bitcoin. You can check the details at <a href="http://coinbaseorders.com/">http://coinbaseorders.com/</a>.<br/><br/>Coinbase Orders is a free service. Please consider a small donation, others have donated too. The donation address is 13ejFczTyMsdZQHkrfVEfiGY8RLD2rDs9i, alternatively <a href="http://coinbaseorders.com/homepage/donate">click here to get donation QR code</a>.<br/><br/>I appriciate your help!<br/><br/>Tom');
 			}
 		}
 	}
