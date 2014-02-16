@@ -56,11 +56,11 @@ class SignPresenter extends BasePresenter {
 		$form->addText('email', 'E-mail:')
 				->setRequired('Please enter your e-mail.');
 
-		$form->addPassword('password', 'New Password:')
+		$form->addPassword('password', 'Set password:')
 				->setRequired('Please enter your new password.')
 				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 6 to 500 characters long.', Array(6, 500));
 
-		$form->addPassword('password2', 'New Password:')
+		$form->addPassword('password2', 'Re-type password:')
 				->setRequired('Please enter your new password.')
 				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);
 
