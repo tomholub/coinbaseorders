@@ -136,15 +136,12 @@ class CoinbaseWrapper extends Nette\Object {
 				$newTokens = $this->coinbaseOauth->refreshTokens($oldTokens);
 			}
 			catch(Coinbase_ApiException $coinbaseApiException){
-				if($coinbaseApiException->getCode() == 401){
-					new SendEmail('tom@coinbaseorders.com', '401 unauthorized when refreshing tokens', print_r(Array('user' => $userId, 'oldTokens' => $oldTokens, 'parameters' => $parameters), true));
-				}
-				else{
-					throw $coinbaseApiException;
-				}
+				Nette\Diagnostics\Debugger::log(print_r($coinbaseApiException, true), 'warning');
 			}
-			$this->context->authenticator->update($userId, $newTokens);
-			$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $newTokens);
+			if(!empty($newTokens)){
+				$this->context->authenticator->update($userId, $newTokens);
+				$this->userCoinbases[$userId] = new Coinbase($this->coinbaseOauth, $newTokens);
+			}
 
 			//recursive callback. Only if this was the first try
 			if ($tryAgain) {
