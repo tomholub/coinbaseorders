@@ -37,5 +37,17 @@ class HomepagePresenter extends BasePresenter {
 			$this->redirect($this->home);
 		}
 	}
+	
+	public function actionDisconnectFromCoinbase(){
+		if($this->user->isLoggedIn()){
+			$this->context->authenticator->update($this->user->id, Array(
+				'coinbase_access_token' => NULL,
+				'coinbase_refresh_token' => NULL,
+				'coinbase_expire_time' => NULL,
+			));
+			$this->flashMessage('Coinbase disconnected. The app will not be able to fulfill any orders until you reconnect it.', 'success');
+			$this->redirect($this->home);			
+		}
+	}
 
 }
