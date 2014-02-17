@@ -33,6 +33,7 @@ services:
 	values: ValuesModel
 	texts: Texts
 	coinbasePrice: CoinbasePrice
+	tokenErrors: TokenErrorsModel
 
 
 factories:
