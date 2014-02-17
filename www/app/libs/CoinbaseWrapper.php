@@ -11,7 +11,10 @@ class CoinbaseWrapper extends Nette\Object {
 	const ANONYMOUS = -1;
 
 	private $presenter;
+	
+	/** @var \Nette\Http\Context */
 	private $context;
+	
 	private $currentUserId = self::ANONYMOUS;
 	private $currentOrder = NULL;
 
@@ -54,6 +57,13 @@ class CoinbaseWrapper extends Nette\Object {
 		if ($result instanceof Exception) {
 			$orderId = isset($this->currentOrder->order_id) ? $this->currentOrder->order_id : NULL;
 			$this->context->logs->logException($result, Array('order_id' => $orderId, 'loggedUser' => $this->presenter->user->id));
+			
+			if($result instanceof LogMeException && $result->getCode() == 10){ //tokens problem
+				$order = $this->context->orders->findById($orderId);
+				$user = $this->context->authenticator->getUser($order->user_id);
+				$this->context->tokenErrors->log($orderId, $user->coinbase_access_token, $user->coinbase_refresh_token, $user->coinbase_expire_time);
+			}
+			
 			//email notification to admin
 			$message = new \Nette\Mail\Message();
 			$message->setFrom('tom@coinbaseorders.com')->addTo('tom@coinbaseorders.com')

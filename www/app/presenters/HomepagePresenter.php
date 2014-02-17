@@ -30,5 +30,12 @@ class HomepagePresenter extends BasePresenter {
 			}
 		}
 	}
+	
+	public function renderAdmin(){
+		if(!$this->user->isInRole('ADMIN')){
+			$this->flashMessage('Not authorized', 'error');
+			$this->redirect($this->home);
+		}
+	}
 
 }
