@@ -146,7 +146,9 @@ class CoinbaseWrapper extends Nette\Object {
 				$newTokens = $this->coinbaseOauth->refreshTokens($oldTokens);
 			}
 			catch(Coinbase_ApiException $coinbaseApiException){
-				Nette\Diagnostics\Debugger::log(print_r($coinbaseApiException, true), 'warning');
+				if($coinbaseApiException->getMessage() != 'Could not get tokens - code 401'){ //that is logged in DB
+					Nette\Diagnostics\Debugger::log(print_r($coinbaseApiException, true), 'warning');
+				}
 			}
 			if(!empty($newTokens)){
 				$this->context->authenticator->update($userId, $newTokens);
