@@ -923,7 +923,7 @@ abstract class Grid extends \Nette\Application\UI\Control
 		$rows = $this->dataSource->getData();
 		$this->template->rows = $rows;
 		$this->template->primaryKey = $this->primaryKey;
-		if($this->hasActiveRowForm()){
+		if($this->hasActiveRowForm() && !empty($rows[$this->activeRowForm])){
 			$row = $rows[$this->activeRowForm];
 			foreach($row as $name => $value){
 				if($this->columnExists($name) && !empty($this['columns']->components[$name]->formRenderer)){
