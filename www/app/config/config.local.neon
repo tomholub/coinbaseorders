@@ -1,8 +1,8 @@
 parameters:
-	OauthClientId: '...'
-	OauthClientSecret: '...'
-	OauthClientUrl: '...'
-	salt: '...'
+	OauthClientId: '3c135ad85723f4ee079cf70786afe39461d64c017234a237a25818dcdf719a67'
+	OauthClientSecret: '674ea138878cab87c40c6650f890b90665e3fdac1e7f003da74cd9fe03e02566'
+	OauthClientUrl: 'http://l.coinbaseorders.com/'
+	salt: 'af&^*PUY799af7fh'
 
 php:
 	date.timezone: US/Pacific
@@ -10,9 +10,9 @@ php:
 
 nette:
 	database:
-		dsn: 'mysql:host=localhost;dbname=set_here_your_database_name'
+		dsn: 'mysql:host=localhost;dbname=coinbaseorders'
 		user: root
-		password: your_db_password
+		password: localDB1
 
 	application:
 		errorPresenter: Error
