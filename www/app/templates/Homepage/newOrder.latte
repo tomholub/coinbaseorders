@@ -10,4 +10,13 @@
 				
 {widget NewOrderForm}
 
+<script>
+    $("#frm-NewOrderForm").submit(function(e) {        
+        var message = "Confirm order to " + $('select[name=action]').val() + " " + $('input[name=amount]').val() + " BTC at $" + $('input[name=at_price]').val() + " per BTC?";
+        if(!confirm(message)){
+            event.preventDefault();
+        }
+    });
+</script>
+
 <p>Buying or selling prices are excluding Coinbase fees.</p>
