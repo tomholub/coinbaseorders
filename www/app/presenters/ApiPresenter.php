@@ -43,7 +43,7 @@ class ApiPresenter extends BasePresenter {
 		$sqlWhere = Array('status' => 'ACTIVE', 'action' => 'BUY', "$currentBuyPrice <= `at_price`");
 		foreach ($this->context->orders->findAll()->where($sqlWhere) as $order) { //double check the price for each before buying
 			$userAssociatedWithOrder = $this->context->authenticator->getUser($order->user_id);
-			if($userAssociatedWithOrder->coinbase_access_token){ //his Coinbase API tokens are set
+			if(!empty($order->at_price) && !empty($order->amount) && $userAssociatedWithOrder->coinbase_access_token){ //his Coinbase API tokens are set
 				$totalBuyPrice = $this->context->coinbase->user($order->user_id)->order($order)->getBuyPrice($order->amount);
 				if ($totalBuyPrice !== NULL && $totalBuyPrice->subtotal->amount <= $order->at_price * $order->amount) {
 					$result = $this->context->coinbase->user($order->user_id)->order($order)->buy($order->amount); //Buy the coins
@@ -59,7 +59,7 @@ class ApiPresenter extends BasePresenter {
 		$sqlWhere = Array('status' => 'ACTIVE', 'action' => 'SELL', "$currentSellPrice >= `at_price`");
 		foreach ($this->context->orders->findAll()->where($sqlWhere) as $order) { //double check the price for each before selling
 			$userAssociatedWithOrder = $this->context->authenticator->getUser($order->user_id);
-			if($userAssociatedWithOrder->coinbase_access_token){ //his Coinbase API tokens are set			
+			if(!empty($order->at_price) && !empty($order->amount) && $userAssociatedWithOrder->coinbase_access_token){ //his Coinbase API tokens are set			
 				$totalSellPrice = $this->context->coinbase->user($order->user_id)->order($order)->getSellPrice($order->amount);
 				if ($totalSellPrice !== NULL && $totalSellPrice->subtotal->amount >= $order->at_price * $order->amount) {
 					$result = $this->context->coinbase->user($order->user_id)->order($order)->sell($order->amount); //Sell the coins
