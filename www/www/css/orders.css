@@ -1,0 +1,17 @@
+
+table.balances {
+    width: 450px;
+}
+
+td.title {
+    font-weight: bold;
+}
+
+td.amount {
+    text-align: right;
+    font-family: 'Courier New', monospace;
+}
+
+h1 {
+    padding-bottom: 5px;
+}

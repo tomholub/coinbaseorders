@@ -1,4 +1,3 @@
-
 <?php
 
 use Nette\Utils\Html;
@@ -26,20 +25,21 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 			'buy' => $this->context->values->get('coinbase', 'buyPrice'),
 			'sell' => $this->context->values->get('coinbase', 'sellPrice'),
 		);
-		
+
+		// Handle OAuth2 redirect from Coinbase
 		if ($this->getParam('code') != NULL && $this->user->isLoggedIn()) {
 			$this->context->coinbase->user($this->user->id)->getAndSaveTokens($this->getParam('code'));
 			$this->redirect($this->home);
 		}
 	}
-	
+
 	public function handleUpdateCurrentPrice(){
 		$updatedSecondsAgo = time() - $this->context->values->get('coinbase', 'sellPrice')->updated->getTimestamp();
-		
-		if($updatedSecondsAgo > 600){ //price not updated for more than 10 minutes
+
+		if($updatedSecondsAgo > 600 && Nette\Environment::isProduction()){ //price not updated for more than 10 minutes
 			throw new Exception('Price not updated for more than 10 minutes');
 		}
-		
+
 		$this->payload->currentBuyPrice = 'Buy $'.number_format($this->context->values->get('coinbase', 'buyPrice')->value, 2);
 		$this->payload->currentSellPrice = 'Sell $'.number_format($this->context->values->get('coinbase', 'sellPrice')->value, 2);
 		$this->payload->lastPriceCheck = "Price updated $updatedSecondsAgo seconds ago";
