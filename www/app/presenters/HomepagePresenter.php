@@ -6,7 +6,14 @@
 class HomepagePresenter extends BasePresenter {
 
 	public function renderDefault($code = NULL) {
-		
+	}
+
+	public function renderOrders() {
+		$this->template->btc_balance = number_format($this->context->coinbase->user($this->user->id)->getBalance(), 4);
+		$this->template->btc_sell_total = number_format($this->context->orders->findSellExposure($this->user->id), 4);
+		$this->template->btc_available = number_format($this->template->btc_balance - $this->template->btc_sell_total, 4);
+		$this->template->btc_buy_total = number_format($this->context->orders->findBuyExposure($this->user->id), 4);
+
 	}
 
 	public function actionOrders() {
@@ -30,14 +37,14 @@ class HomepagePresenter extends BasePresenter {
 			}
 		}
 	}
-	
+
 	public function renderAdmin(){
 		if(!$this->user->isInRole('ADMIN')){
 			$this->flashMessage('Not authorized', 'error');
 			$this->redirect($this->home);
 		}
 	}
-	
+
 	public function actionDisconnectFromCoinbase(){
 		if($this->user->isLoggedIn()){
 			$this->context->authenticator->update($this->user->id, Array(
@@ -46,7 +53,7 @@ class HomepagePresenter extends BasePresenter {
 				'coinbase_expire_time' => NULL,
 			));
 			$this->flashMessage('Coinbase disconnected. The app will not be able to fulfill any orders until you reconnect it.', 'success');
-			$this->redirect($this->home);			
+			$this->redirect($this->home);
 		}
 	}
 

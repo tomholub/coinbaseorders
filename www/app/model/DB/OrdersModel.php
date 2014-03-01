@@ -35,6 +35,24 @@ class OrdersModel extends BaseDbModel {
 		return $this->findAll()->get($id);
 	}
 
+	public function findExposure($user_id, $action) {
+		$sqlWhere = Array('status' => 'ACTIVE', 'user_id' => $user_id, 'action' => $action);
+		$exposure = $this->findAll()->where($sqlWhere)->sum("amount");
+
+		if(empty($exposure)) {
+			$exposure = 0;
+		}
+		return $exposure;
+	}
+
+	public function findSellExposure($user_id) {
+		return $this->findExposure($user_id, 'SELL');
+	}
+
+	public function findBuyExposure($user_id) {
+		return $this->findExposure($user_id, 'BUY');
+	}
+
 	public function insert($values) {
 		return $this->findAll()->insert($values);
 	}

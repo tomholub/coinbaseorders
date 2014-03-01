@@ -1,8 +1,32 @@
+{block head}
+<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/orders.css" />
+{/block}
+
 {block content}
 <h1>Orders</h1>
- 
+<table class="balances table table-bordered">
+    <tr>
+        <td class="title">Coinbase Balance</td>
+        <td class="amount">{$btc_balance} BTC</td>
+    </tr>
+    <tr>
+        <td class="title">Sell orders</td>
+        <td class="amount">{$btc_sell_total} BTC</td>
+    </tr>
+    <tr>
+        <td class="title">Available Balance</td>
+        <td class="amount">{$btc_available} BTC</td>
+    </tr>
+    <tr>
+        <td class="title">Buy orders</td>
+        <td class="amount">{$btc_buy_total} BTC</td>
+    </tr>
+</table>
+
 <a n:href="newOrder" class="btn btn-success btn-large"><i class="icon-white icon-plus"></i> Place new order</a>
 
 {widget OrdersGrid}
 
 <p>Price on Coinbase is checked about every second against your orders. Last check on {$latestPrice['buy']->updated} PST</p>
+
+
