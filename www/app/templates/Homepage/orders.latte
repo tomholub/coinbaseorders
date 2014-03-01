@@ -7,15 +7,15 @@
 <table class="balances table table-bordered">
     <tr>
         <td class="title">Coinbase Balance</td>
-        <td class="amount">{$btc_balance} BTC</td>
+        <td class="amount">{$btc_balance|number:4} BTC</td>
     </tr>
     <tr>
         <td class="title">Sell orders</td>
-        <td class="amount">{$btc_sell_total} BTC</td>
+        <td class="amount">{$btc_sell_total|number:4} BTC</td>
     </tr>
     <tr>
         <td class="title">Buy orders</td>
-        <td class="amount">{$btc_buy_total} USD</td>
+        <td class="amount">${$btc_buy_total|number:2}</td>
     </tr>
 </table>
 
