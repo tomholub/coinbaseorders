@@ -37,7 +37,7 @@ class OrdersModel extends BaseDbModel {
 
 	public function findExposure($user_id, $action) {
 		$sqlWhere = Array('status' => 'ACTIVE', 'user_id' => $user_id, 'action' => $action);
-		$exposure = $this->findAll()->where($sqlWhere)->sum("amount");
+		$exposure = $this->findAll()->where($sqlWhere)->sum($action == 'SELL' ? "amount" : "amount*at_price");
 
 		if(empty($exposure)) {
 			$exposure = 0;

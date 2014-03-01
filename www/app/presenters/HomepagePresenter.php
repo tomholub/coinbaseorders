@@ -11,7 +11,6 @@ class HomepagePresenter extends BasePresenter {
 	public function renderOrders() {
 		$this->template->btc_balance = number_format($this->context->coinbase->user($this->user->id)->getBalance(), 4);
 		$this->template->btc_sell_total = number_format($this->context->orders->findSellExposure($this->user->id), 4);
-		$this->template->btc_available = number_format($this->template->btc_balance - $this->template->btc_sell_total, 4);
 		$this->template->btc_buy_total = number_format($this->context->orders->findBuyExposure($this->user->id), 4);
 
 	}
