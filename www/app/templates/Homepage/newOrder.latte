@@ -1,20 +1,31 @@
 {block content}
 <h1>Place new order</h1>
-				
+
 <p>You can place a new order to be executed in future when price condition is met.</p>
 <ul>
 	<li><b>BUY</b> - wait until price DROPS on a certain level, then buy</li>
 	<li><b>SELL</b> - sell some amount when price skyrokets fast</li>
 </ul>
 
-				
+
 {widget NewOrderForm}
 
 <script>
-    $("#frm-NewOrderForm").submit(function(e) {        
+    $("#frm-NewOrderForm").submit(function(e) {
         var message = "Confirm order to " + $('select[name=action]').val() + " " + $('input[name=amount]').val() + " BTC at $" + $('input[name=at_price]').val() + " per BTC?";
         if(!confirm(message)){
             event.preventDefault();
+        }
+    });
+
+    // Calculate and update the Total field
+    $("#frm-NewOrderForm").change(function(e) {
+        var quantity = parseFloat($("#frmNewOrderForm-amount").val());
+        var price = parseFloat($("#frmNewOrderForm-at_price").val());
+        var total = quantity * price;
+
+        if (total) {
+            $("#frmNewOrderForm-total").val("$" + total.toFixed(2));
         }
     });
 </script>

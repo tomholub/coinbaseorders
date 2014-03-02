@@ -10,6 +10,8 @@ class NewOrderForm extends Nette\Application\UI\Form {
 		$this->addText('at_price', 'At price per Bitcoin')
 				->addRule(\Nette\Forms\Form::FLOAT)
 				->addRule(\Nette\Forms\Form::NOT_EQUAL, 'Price per bitcoin must be at least 0.01', 0);
+		$this->addText('total', 'Total')
+				->setDisabled();
 		$this->addSubmit('submit', 'Place Limit Order');
 		$this->onSuccess[] = callback($this, 'success');
 	}
