@@ -3,8 +3,8 @@
 
 <p>You can place a new order to be executed in future when price condition is met.</p>
 <ul>
-	<li><b>BUY</b> - wait until price DROPS on a certain level, then buy</li>
-	<li><b>SELL</b> - sell some amount when price skyrokets fast</li>
+	<li><b>BUY</b> - wait until price DROPS to a certain level, then buy</li>
+	<li><b>SELL</b> - sell some amount when price skyrockets fast</li>
 </ul>
 
 
@@ -12,7 +12,23 @@
 
 <script>
     $("#frm-NewOrderForm").submit(function(e) {
-        var message = "Confirm order to " + $('select[name=action]').val() + " " + $('input[name=amount]').val() + " BTC at $" + $('input[name=at_price]').val() + " per BTC?";
+        var action = $("#frmNewOrderForm-action").val();
+        var targetPrice = parseFloat($("#frmNewOrderForm-at_price").val());
+        var price = window.currentBuyPrice;
+        if (action === "SELL") {
+            price = window.currentSellPrice;
+        }
+
+        // Only pop the confirmation dialog when the targetPrice is close to the actual price
+        var threshold = 0.05;
+        if (Math.abs((targetPrice - price) / targetPrice) >= threshold) {
+            return;
+        }
+
+        var message = ("Your order is within " + (threshold * 100) + "% "
+            + "of the current price and may execute very soon. "
+            + "Are you sure you wish to submit this order?");
+
         if(!confirm(message)){
             event.preventDefault();
         }
