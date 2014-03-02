@@ -7,7 +7,7 @@
 
 	<title>{block title|striptags}Coinbase Limit Orders{/block}</title>
 
-	
+
 	{* <link rel="stylesheet" media="print" href="{$basePath}/css/print.css"> *}
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
 	{* <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css"> *}
@@ -15,7 +15,7 @@
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	<script src="{$basePath}/js/grid.js"></script>
 	<script src="{$basePath}/js/jquery-ui.js"></script>
-	<script src="{$basePath}/js/netteForms.js"></script>	
+	<script src="{$basePath}/js/netteForms.js"></script>
 	<link rel="stylesheet" href="{$basePath}/css/grid.css" />
 	<link rel="stylesheet" href="{$basePath}/css/jquery-ui/jquery-ui.css" />
 	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css" />
@@ -27,7 +27,7 @@
 <body>
 	<script> document.documentElement.className+=' js' </script>
 
-	
+
 <nav class="navbar navbar-default" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
@@ -47,12 +47,20 @@
       <li n:if="$user->isLoggedIn()"><a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'">Orders</a></li>
 	  <li><a>
 				<span style="color:#3A3;display:inline;" id="currentBuyPrice">Buy ${$latestPrice['buy']['value']|number:2}</span><span style="color:#A33;display:inline;" id="currentSellPrice">Sell ${$latestPrice['sell']['value']|number:2}</span><span style="display:inline;" id="lastPriceCheck">Price updated {time() - $latestPrice['sell']['updated']->getTimestamp()} seconds ago</span>
-				<script> //refresh prices in header every 2 seconds
+				<script>
+                    //refresh prices in header every 2 seconds
+                    window.currentBuyPrice = parseFloat({$latestPrice['buy']['value']})
+                    window.currentSellPrice = parseFloat({$latestPrice['sell']['value']})
+
 					window.setInterval(function(){
-						$.getJSON({link updateCurrentPrice!}, null, function(payload) { 
+						$.getJSON({link updateCurrentPrice!}, null, function(payload) {
 							$('#currentBuyPrice').text(payload.currentBuyPrice);
 							$('#currentSellPrice').text(payload.currentSellPrice);
 							$('#lastPriceCheck').text(payload.lastPriceCheck);
+
+                            // Update global variables
+                            window.currentBuyPrice = parseFloat(payload.currentBuyPriceValue);
+                            window.currentSellPrice = parseFloat(payload.currentSellPriceValue);
 						});
 					}, 2000);
 				</script>
@@ -61,8 +69,8 @@
     <ul class="nav navbar-nav navbar-right">
 		<li n:ifset="$headerMessage" class="important">
 			{$headerMessage}
-		</li>	
-		<li>		
+		</li>
+		<li>
 			{if !$user->isLoggedIn()}
 				<a n:href="Sign:in">Log in / Sign up</a>
 			{else}
@@ -76,18 +84,18 @@
 				  </ul>
 				</li>
 			{/if}
-		</li>	  
+		</li>
     </ul>
   </div>
 </nav>
-	
+
 	<div id="content">
 		<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{!$flash->message}</div>
 		{include #content}
 		<script src="{$basePath}/js/lightbox-2.6.min.js"></script>
 	</div>
-	
-	
+
+
 
 	{block scripts}
 	<script src="{$basePath}/js/jquery.js"></script>

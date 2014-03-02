@@ -40,9 +40,13 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 			throw new Exception('Price not updated for more than 10 minutes');
 		}
 
-		$this->payload->currentBuyPrice = 'Buy $'.number_format($this->context->values->get('coinbase', 'buyPrice')->value, 2);
-		$this->payload->currentSellPrice = 'Sell $'.number_format($this->context->values->get('coinbase', 'sellPrice')->value, 2);
+		$this->payload->currentBuyPriceValue = $this->context->values->get('coinbase', 'buyPrice')->value;
+		$this->payload->currentSellPriceValue = $this->context->values->get('coinbase', 'sellPrice')->value;
+
+		$this->payload->currentBuyPrice = 'Buy $'.number_format($this->payload->currentBuyPriceValue, 2);
+		$this->payload->currentSellPrice = 'Sell $'.number_format($this->payload->currentSellPriceValue, 2);
 		$this->payload->lastPriceCheck = "Price updated $updatedSecondsAgo seconds ago";
+
 		$this->sendPayload();
 	}
 
