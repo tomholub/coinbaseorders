@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Colling functions that are not defined in this class will be passed to appropriate Coinbase object - thanks to __call function overload below.
+ * 
+ *  ->buy and ->sell can (and should) be called on CoinbaseWrapper object rather than Coinbase directly - for logging and exception handling purposes.
+ */
 class CoinbaseWrapper extends Nette\Object {
 
 	/** @var Coinbase_OAuth */
@@ -60,8 +65,11 @@ class CoinbaseWrapper extends Nette\Object {
 			
 			if($result instanceof LogMeException && $result->getCode() == 10){ //tokens problem
 				$order = $this->context->orders->findById($orderId);
-				$user = $this->context->authenticator->getUser($order->user_id);
-				$this->context->tokenErrors->log($orderId, $user->coinbase_access_token, $user->coinbase_refresh_token, $user->coinbase_expire_time);
+				if(isset($order->user_id)){
+					$user = $this->context->authenticator->getUser($order->user_id);
+					$this->context->tokenErrors->log($orderId, $user->coinbase_access_token, $user->coinbase_refresh_token, $user->coinbase_expire_time);					
+				}
+				
 			}
 			
 			//email notification to admin
