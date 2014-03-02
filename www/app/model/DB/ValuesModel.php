@@ -17,8 +17,21 @@ class ValuesModel extends BaseDbModel {
 	}
 
 	public function update($group, $name, $newValue) {
-		$this->database->table('values')->where(Array('group' => $group, 'name' => $name))
+		$success = $this->database->table('values')->where(Array('group' => $group, 'name' => $name))
 				->update(Array('value' => $newValue, 'updated' => NULL));
+
+		if (!$success) {
+			// TODO(mattfaus): This should really be an atomic "upsert"
+			$this->database->table('values')->insert(Array(
+				'group' => $group,
+				'name' => $name,
+				'value' => $newValue,
+				'updated' => NULL));
+		}
+	}
+
+	public function updateDateTime($group, $name, $dateTime) {
+		$this->update($group, $name, $dateTime->format(DateTime::ISO8601));
 	}
 
 	/** @return Nette\Database\Table\ActiveRow */
@@ -26,4 +39,14 @@ class ValuesModel extends BaseDbModel {
 		return $this->findAll()->where(Array('group' => $group, 'name' => $name))->fetch();
 	}
 
+	public function getDateTime($group, $name) {
+		$value = $this->get($group, $name);
+		if (empty($value)) {
+			return NULL;
+		}
+
+		// Returns a new DateTime instance or FALSE on failure.
+		$value = $this->get($group, $name)->value;
+		return DateTime::createFromFormat(DateTime::ISO8601, $value);
+	}
 }

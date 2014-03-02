@@ -53,6 +53,47 @@ class OrdersModel extends BaseDbModel {
 		return $this->findExposure($user_id, 'BUY');
 	}
 
+	/**
+	 * Calculates active/executed buy/sell orders.
+	 * This is a heavy operation.
+	 */
+	public function calculateOrderStats() {
+		$statsQuery = "
+			SELECT
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',1,0)) as activeBuyCount,
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',amount,0)) as activeBuyBTCSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',amount_currency,0)) as activeBuyUSDSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',1,0)) as activeSellCount,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',amount,0)) as activeSellBTCSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',amount_currency,0)) as activeSellUSDSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',1,0)) as executedBuyCount,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',amount,0)) as executedBuyBTCSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',amount_currency,0)) as executedBuyUSDSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',1,0)) as executedSellCount,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',amount,0)) as executedSellBTCSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',amount_currency,0)) as executedSellUSDSum
+			FROM
+				orders
+			WHERE
+				status = 'ACTIVE' OR status = 'EXECUTED'";
+
+		$row = $this->database->query($statsQuery)->execute();
+		return Array(
+			"activeBuyCount" => $row->fetchField("activeBuyCount"),
+			"activeBuyBTCSum" => $row->fetchField("activeBuyBTCSum"),
+			"activeBuyUSDSum" => $row->fetchField("activeBuyUSDSum"),
+			"activeSellCount" => $row->fetchField("activeSellCount"),
+			"activeSellBTCSum" => $row->fetchField("activeSellBTCSum"),
+			"activeSellUSDSum" => $row->fetchField("activeSellUSDSum"),
+			"executedBuyCount" => $row->fetchField("executedBuyCount"),
+			"executedBuyBTCSum" => $row->fetchField("executedBuyBTCSum"),
+			"executedBuyUSDSum" => $row->fetchField("executedBuyUSDSum"),
+			"executedSellCount" => $row->fetchField("executedSellCount"),
+			"executedSellBTCSum" => $row->fetchField("executedSellBTCSum"),
+			"executedSellUSDSum" => $row->fetchField("executedSellUSDSum")
+		);
+	}
+
 	public function insert($values) {
 		return $this->findAll()->insert($values);
 	}
