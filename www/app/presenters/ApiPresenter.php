@@ -12,16 +12,14 @@ class ApiPresenter extends BasePresenter {
 	 */
 	public function renderCron() {
 		$initialTime = time();
-
 		$this->possiblyUpdateGlobalSummaryStats();
 
-		// STOPSHIP(mattfaus): DEBUG ONLY
 		// Check and execute active orders every 3 seconds
-		// while(time() - $initialTime < 55){
-		// 	$this->checkActiveOrders();
-		// 	// TODO(mattfaus): We should sleep less if order execution took a long time
-		// 	sleep(3);
-		// }
+		while(time() - $initialTime < 55){
+			$this->checkActiveOrders();
+			// TODO(mattfaus): We should sleep less if order execution took a long time
+			sleep(3);
+		}
 	}
 
 	private function checkActiveOrders() {
