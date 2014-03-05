@@ -56,6 +56,7 @@ class OrdersModel extends BaseDbModel {
 	/**
 	 * Calculates active/executed buy/sell orders.
 	 * This is a heavy operation.
+	 * @return Nette\Database\Table\ActiveRow
 	 */
 	public function calculateOrderStats() {
 		$statsQuery = "
@@ -77,21 +78,7 @@ class OrdersModel extends BaseDbModel {
 			WHERE
 				status = 'ACTIVE' OR status = 'EXECUTED'";
 
-		$row = $this->database->query($statsQuery)->execute();
-		return Array(
-			"activeBuyCount" => $row->fetchField("activeBuyCount"),
-			"activeBuyBTCSum" => $row->fetchField("activeBuyBTCSum"),
-			"activeBuyUSDSum" => $row->fetchField("activeBuyUSDSum"),
-			"activeSellCount" => $row->fetchField("activeSellCount"),
-			"activeSellBTCSum" => $row->fetchField("activeSellBTCSum"),
-			"activeSellUSDSum" => $row->fetchField("activeSellUSDSum"),
-			"executedBuyCount" => $row->fetchField("executedBuyCount"),
-			"executedBuyBTCSum" => $row->fetchField("executedBuyBTCSum"),
-			"executedBuyUSDSum" => $row->fetchField("executedBuyUSDSum"),
-			"executedSellCount" => $row->fetchField("executedSellCount"),
-			"executedSellBTCSum" => $row->fetchField("executedSellBTCSum"),
-			"executedSellUSDSum" => $row->fetchField("executedSellUSDSum")
-		);
+		return $this->database->query($statsQuery)->fetch();
 	}
 
 	public function insert($values) {

@@ -39,6 +39,11 @@ class ValuesModel extends BaseDbModel {
 		return $this->findAll()->where(Array('group' => $group, 'name' => $name))->fetch();
 	}
 
+	/** @return array */
+	public function getGroup($group) {
+		return $this->findAll()->where(Array('group' => $group))->fetchPairs("name", "value");
+	}
+
 	public function getDateTime($group, $name) {
 		$value = $this->get($group, $name);
 		if (empty($value)) {

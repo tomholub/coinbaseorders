@@ -92,14 +92,16 @@ class ApiPresenter extends BasePresenter {
 			$nextUpdateTime = $lastUpdateTime->add($updateInterval);
 		}
 
-		$confirmed_users = $this->context->authenticator->getCountConfirmedUsers();
-		$stats = $this->context->orders->calculateOrderStats();
-		\Nette\Diagnostics\Debugger::dump($stats);
-
 		if ($nextUpdateTime <= $now) {
-			// amount of registered users, amount of active orders, amount of executed orders to date
-			\Nette\Diagnostics\Debugger::dump("Updating!");
 			$this->context->values->updateDateTime("globalStats", "lastUpdateTime", $now);
+
+			$confirmedUsers = $this->context->authenticator->getCountConfirmedUsers();
+			$this->context->values->update("globalStats", "confirmedUsers", $confirmedUsers);
+
+			$stats = $this->context->orders->calculateOrderStats();
+			foreach ($stats as $key => $value) {
+				$this->context->values->update("globalStats", $key, $value);
+			}
 		}
 	}
 
