@@ -6,9 +6,8 @@
 class HomepagePresenter extends BasePresenter {
 
 	public function renderDefault($code = NULL) {
-		// TODO(mattfaus): memcache this
+		// TODO(mattfaus): memcache this //note by tom: we can use Nette Caching http://doc.nette.org/en/2.1/caching
 		$this->template->globalStats = $this->context->values->getGroup("globalStats");
-		$this->template->globalStats["confirmedUsers"] = $this->context->values->get("globalStats", "confirmedUsers")->value;
 	}
 
 	public function renderOrders() {
