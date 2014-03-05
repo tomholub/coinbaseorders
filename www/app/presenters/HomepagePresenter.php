@@ -6,6 +6,9 @@
 class HomepagePresenter extends BasePresenter {
 
 	public function renderDefault($code = NULL) {
+		// TODO(mattfaus): memcache this
+		$this->template->globalStats = $this->context->values->getGroup("globalStats");
+		$this->template->globalStats["confirmedUsers"] = $this->context->values->get("globalStats", "confirmedUsers")->value;
 	}
 
 	public function renderOrders() {

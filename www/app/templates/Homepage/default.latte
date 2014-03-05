@@ -6,14 +6,20 @@
 	<h1>Place limit orders on your Coinbase account</h1>
 
 	<p>When price dips unexpectedly while I sleep, I want to make sure to get some discounted Bitcoins.</p>
-	
+
 	<p>Or sell a little when it skyrockets.</p>
-	
+
 	<a n:href="Sign:in" class="btn btn-success btn-large"><i class="icon-white icon-lock"></i> Sign up</a>
-	
+
+	<p>CoinbaseOrders.com is home to {$globalStats["confirmedUsers"]} registered users </p>
+	<p>Who have bought {$globalStats["executedBuyBTCSum"]|number:2} BTC over {$globalStats["executedBuyCount"]} buy orders</p>
+	<p>...and have {$globalStats["activeBuyCount"]} buy orders open</p>
+	<p>...and have sold {$globalStats["executedSellBTCSum"]} BTC over {$globalStats["executedSellCount"]} sell orders</p>
+	<p>...and have {$globalStats["activeSellCount"]} sell orders open</p>
+
 	<br/><br/><br/><br/><h2>Screenshot</h2>
 	<img src="img/orders-screen.png" style="width:40%" class="img-responsive"  />
-	
+
 {elseif isset($headerMessage)}
 	{if $headerMessage->getName() == 'a' && $headerMessage->getText() == 'Connect to Coinbase'}
 		<p>Now you need to connect to Coinbase so that you can place Buy and Sell limit orders.</p>
@@ -22,8 +28,8 @@
 
 	{if $headerMessage->getName() == 'span'}
 		Please check your email for verification link. If you didn't get one, write me at tom@coinbaseorders.com
-	{/if}		
-		
+	{/if}
+
 {else}
 	<p>You can place orders now.</p>
 	<a n:href="Homepage:orders, 'OrdersGrid-filter[status]' => 'ACTIVE'" class="btn btn-success btn-large"><i class="icon-white icon-screenshot"></i> See and place orders</a>
@@ -34,10 +40,10 @@
 		<li>AFTER you verify your Coinbase account and place an order, you can't place a second one until the first order is completed (4-5 days)</li>
 		<li>If you have done this before on Coinbase and your account is fully established - you can place as many orders as you like</li>
 	</ul>
-	
+
 	<br/><h2>Price/orders are checked about every second</h2>
-	<p>This ensures fast response when price drops for a small period of time.</p>	
-	
+	<p>This ensures fast response when price drops for a small period of time.</p>
+
 	<br/><h2>Upcoming features</h2>
 	<ul>
 		<li><strike>Order confirmation dialog</strike> DONE</li>
@@ -45,7 +51,7 @@
 		<li>Entering amount to buy in USD</li>
 		<li>Have ideas? Email me <a href="mailto:tom@coinbaseorders.com">tom@coinbaseorders.com</a></li>
 	</ul>
-	
+
 	<br/><h2>Contribute (Code or Coins)</h2>
 	<p>I think Bitcoin is the most important thing to happen in next 5 years. I'll do what I can to support Bitcoin community and make things easier for everyone.</p>
 
@@ -53,11 +59,11 @@
 
 	<p>Alternatively, please consider a small donation. Direct address is 1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign</p>
 	<img src="https://chart.googleapis.com/chart?cht=qr&chl=bitcoin%3A1NNcg12tPe2EHhg3Ese7hq6mEQ9W5W1ign&choe=UTF-8&chs=200x200"/>
-	
+
 	<br/><h2>Discussion</h2>
 	<p>You can discuss ideas with the community at <a href="https://bitcointalk.org/index.php?topic=389638.0">Bitcoin Talk Forum</a>.</p>
-	
-	
+
+
 {/if}
 
 
