@@ -12,7 +12,6 @@ class ApiPresenter extends BasePresenter {
 	 */
 	public function renderCron() {
 		$initialTime = time();
-		$this->possiblyUpdateGlobalSummaryStats();
 
 		// Check and execute active orders every 3 seconds
 		while(time() - $initialTime < 55){
@@ -20,6 +19,8 @@ class ApiPresenter extends BasePresenter {
 			// TODO(mattfaus): We should sleep less if order execution took a long time
 			sleep(3);
 		}
+		
+		$this->possiblyUpdateGlobalSummaryStats();
 	}
 
 	private function checkActiveOrders() {
