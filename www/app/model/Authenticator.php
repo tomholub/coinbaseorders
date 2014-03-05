@@ -102,18 +102,25 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator {
 			return $user->user_id;
 		}
 	}
-	
+
+	/**
+	 * Counts the number of confirmed users. This is a heavy operation.
+	 */
+	public function getCountConfirmedUsers() {
+		return $this->database->table(self::TABLE_NAME)->where(Array('email_confirmation' => 'confirmed'))->count();
+	}
+
 	public function setRandomHash($userId){
 		$randomHash = (string)$this->context->salted->hash(time().  rand(0, 10000000).$userId);
 		$this->update($userId, Array('random_hash' => $randomHash));
 		return $randomHash;
 	}
-	
+
 	public function verifyRandomHash($userId, $randomHash){
 		$user = $this->getUser($userId);
 		return ($randomHash && $user && $user->random_hash == $randomHash);
 	}
-		
+
 	public function resetPassword($userId, $randomHash, $newPassword){
 		if($this->verifyRandomHash($userId, $randomHash)){
 			$this->update($userId, Array(

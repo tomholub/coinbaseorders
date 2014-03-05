@@ -53,6 +53,34 @@ class OrdersModel extends BaseDbModel {
 		return $this->findExposure($user_id, 'BUY');
 	}
 
+	/**
+	 * Calculates active/executed buy/sell orders.
+	 * This is a heavy operation.
+	 * @return Nette\Database\Table\ActiveRow
+	 */
+	public function calculateOrderStats() {
+		$statsQuery = "
+			SELECT
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',1,0)) as activeBuyCount,
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',amount,0)) as activeBuyBTCSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'BUY',amount_currency,0)) as activeBuyUSDSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',1,0)) as activeSellCount,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',amount,0)) as activeSellBTCSum,
+				SUM(IF(status = 'ACTIVE' AND action = 'SELL',amount_currency,0)) as activeSellUSDSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',1,0)) as executedBuyCount,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',amount,0)) as executedBuyBTCSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'BUY',amount_currency,0)) as executedBuyUSDSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',1,0)) as executedSellCount,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',amount,0)) as executedSellBTCSum,
+				SUM(IF(status = 'EXECUTED' AND action = 'SELL',amount_currency,0)) as executedSellUSDSum
+			FROM
+				orders
+			WHERE
+				status = 'ACTIVE' OR status = 'EXECUTED'";
+
+		return $this->database->query($statsQuery)->fetch();
+	}
+
 	public function insert($values) {
 		return $this->findAll()->insert($values);
 	}
