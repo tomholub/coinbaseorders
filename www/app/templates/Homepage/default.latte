@@ -7,7 +7,7 @@
 
 	<p>When price dips unexpectedly while I sleep, I want to make sure to get some discounted Bitcoins. Or sell a little when it skyrockets.</p>
 
-	<p>
+	<p n:if="count($globalStats)">
 		We're home to <b>{$globalStats["confirmedUsers"]} users</b> who have:
 		<ul>
 			<li><b>bought {$globalStats["executedBuyBTCSum"]|number:2} BTC</b> over {$globalStats["executedBuyCount"]} buy orders ({$globalStats["activeBuyCount"]} buy orders currently open)</li>
