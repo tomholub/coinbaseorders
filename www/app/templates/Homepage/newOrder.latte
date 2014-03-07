@@ -21,15 +21,22 @@
 
         // Only pop the confirmation dialog when the targetPrice is close to the actual price
         var threshold = 0.05;
-        if (Math.abs((targetPrice - price) / targetPrice) >= threshold) {
-            return;
+        var message = undefined;
+        if (Math.abs((targetPrice - price) / targetPrice) < threshold) {
+            message = ("Your order is within " + (threshold * 100) + "% "
+                + "of the current price and may execute very soon. "
+                + "Are you sure you wish to submit this order?");
+        } else if (action === "SELL" && targetPrice < price) {
+            message = ("Your sell price is less than the current price "
+                + "so it will execute immediately. "
+                + "Are you sure you wish to submit this order?");
+        } else if (action === "BUY" && targetPrice > price) {
+            message = ("Your buy price is greater than the current price "
+                + "so it will execute immediately. "
+                + "Are you sure you wish to submit this order?");
         }
 
-        var message = ("Your order is within " + (threshold * 100) + "% "
-            + "of the current price and may execute very soon. "
-            + "Are you sure you wish to submit this order?");
-
-        if(!confirm(message)){
+        if(message && !confirm(message)){
             event.preventDefault();
         }
     });
