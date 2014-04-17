@@ -6,7 +6,7 @@ class NewOrderForm extends Nette\Application\UI\Form {
 		$this->addSelect('action', 'Action', Array('BUY' => 'Buy', 'SELL' => 'Sell'))->setRequired();
 		$this->addText('amount', 'Amount of Bitcoins')
 				->addRule(\Nette\Forms\Form::FLOAT)
-				->addRule(\Nette\Forms\Form::RANGE, 'Amount of bitcoins per order must be between 0.001 and 10. If you need to buy more, write me at tom@coinbaseorders.com and I\'ll make it possible.', Array(0.001, 10.001));
+				->addRule(\Nette\Forms\Form::RANGE, 'Amount of bitcoins per order must be between 0.001 and 50. If you need to buy more, write me at tom@coinbaseorders.com and I\'ll make it possible.', Array(0.001, 50.001));
 		$this->addText('at_price', 'At price per Bitcoin')
 				->addRule(\Nette\Forms\Form::FLOAT)
 				->addRule(\Nette\Forms\Form::NOT_EQUAL, 'Price per bitcoin must be at least 0.01', 0);
