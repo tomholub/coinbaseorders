@@ -77,16 +77,15 @@ class OrdersGrid extends GridBuilder {
 						$orderToEdit = $presenter->context->orders->findAll()->where(Array(
 							'order_id' => $values['order_id'],
 							'user_id' => $presenter->user->id,
-						));
-						
-						if(count($orderToEdit)){
+								));
+
+						if (count($orderToEdit)) {
 							$orderToEdit->update(Array(
 								'date_edited' => new Nette\Database\SqlLiteral('NOW()'),
 								'amount' => $values['amount'],
 								'at_price' => $values['at_price'],
 							));
-						}
-						else{ //order ID doesn't match user id. Someone's trying what the app can take.
+						} else { //order ID doesn't match user id. Someone's trying what the app can take.
 							$presenter->flashMessage('Not cool. At all. But go ahead, dig deeper if you like.', 'error');
 						}
 					}
