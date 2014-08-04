@@ -2,7 +2,7 @@
 
 use Nette\Application\Routers\RouteList,
 	Nette\Application\Routers\Route,
-	Nette\Application\Routers\SimpleRouter;
+	Nette\Diagnostics\Debugger;
 
 /**
  * Router factory.
@@ -14,8 +14,9 @@ class RouterFactory {
 	 */
 	public function createRouter() {
 		$router = new RouteList();
-		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+		$flags = Debugger::$productionMode ? Route::SECURED : null;
+		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default', $flags);
 		return $router;
-//		return new SimpleRouter('Homepage:default');	
 	}
+
 }
