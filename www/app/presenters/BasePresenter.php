@@ -42,11 +42,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter {
 
 		$this->payload->currentBuyPriceValue = $this->context->values->get('coinbase', 'buyPrice')->value;
 		$this->payload->currentSellPriceValue = $this->context->values->get('coinbase', 'sellPrice')->value;
-
-		$this->payload->currentBuyPrice = 'Buy $'.number_format($this->payload->currentBuyPriceValue, 2);
-		$this->payload->currentSellPrice = 'Sell $'.number_format($this->payload->currentSellPriceValue, 2);
-		$this->payload->lastPriceCheck = "Price updated $updatedSecondsAgo seconds ago";
-
+		if(is_numeric($this->payload->currentBuyPriceValue) && is_numeric($this->payload->currentSellPriceValue)){
+			$this->payload->currentBuyPrice = 'Buy $'.number_format($this->payload->currentBuyPriceValue, 2);
+			$this->payload->currentSellPrice = 'Sell $'.number_format($this->payload->currentSellPriceValue, 2);
+			$this->payload->lastPriceCheck = "Price updated $updatedSecondsAgo seconds ago";
+		}
 		$this->sendPayload();
 	}
 
