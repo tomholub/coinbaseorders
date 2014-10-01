@@ -60,8 +60,8 @@ class CoinbaseWrapper extends Nette\Object {
 
 		//if Exception occured - need to log exception in DB
 		if ($result instanceof Exception) {
-			$orderId = isset($this->currentOrder->order_id) ? $this->currentOrder->order_id : NULL;
-			$this->context->logs->logException($result, Array('order_id' => $orderId, 'loggedUser' => $this->presenter->user->id));
+			$orderId = isset($this->currentOrder->id) ? $this->currentOrder->id : NULL;
+			$this->context->logs->logException($result, Array('id' => $orderId, 'loggedUser' => $this->presenter->user->id));
 			
 			if($result instanceof LogMeException && $result->getCode() == 10){ //tokens problem
 				$order = $this->context->orders->findById($orderId);

@@ -3,6 +3,7 @@ parameters:
 	OauthClientSecret: '...'
 	OauthClientUrl: '...'
 	salt: '...'
+	gmailPwd: '...'
 
 php:
 	date.timezone: US/Pacific
@@ -20,6 +21,14 @@ nette:
 	session:
 		expiration: 14 days
 
+    mailer:
+        smtp: true
+        host: 'smtp.gmail.com'
+        port: 443
+        username: 'tom@coinbaseorders.com'
+        password: '*****'
+        secure: 'ssl'
+        timeout: 15
 
 services:
 	authenticator: Authenticator

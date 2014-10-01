@@ -24,7 +24,7 @@ class OrdersGrid extends GridBuilder {
 //		$this->presenter = $presenter;
 
 		$this->table = $this->database->table('orders');
-		$this->table->select('date_created, order_id, status, action, amount, amount_currency, at_price, date_cancel, amount*at_price AS total');
+		$this->table->select('date_created, id, status, action, amount, amount_currency, at_price, date_cancel, amount*at_price AS total');
 		$this->table->where('user_id', $this->presenter->user->id);
 		$this->setDataSource(new \NiftyGrid\DataSource\NDataSource($this->table));
 
@@ -75,7 +75,7 @@ class OrdersGrid extends GridBuilder {
 						$presenter->flashMessage('Price per bitcoin must be a number like 0.50 and more than zero.');
 					} else {
 						$orderToEdit = $presenter->context->orders->findAll()->where(Array(
-							'order_id' => $values['order_id'],
+							'id' => $values['id'],
 							'user_id' => $presenter->user->id,
 								));
 
@@ -99,7 +99,7 @@ class OrdersGrid extends GridBuilder {
 							return ($row['status'] == 'ACTIVE') ? "delete" : 'nodisplay';
 						})
 				->setLink(function($row) use ($self) {
-							return $self->link("DeleteOrder!", $row['order_id']);
+							return $self->link("DeleteOrder!", $row['id']);
 						})
 				->setAjax(FALSE);
 

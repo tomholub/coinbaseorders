@@ -1,0 +1,29 @@
+############################################
+# Stack Trace ##############################
+############################################
+
+Traceback (most recent call last):
+
+  File "./cron.py", line 22, in <module>
+    connectionManager = database.ConnectionManager(configurator.mysqlString())
+
+  File "/home/tom/git/bitcoin/coinbaseorders/python/cbo/configurator.py", line 17, in mysqlString
+    return 'mysql://%s:%s@%s/%s' % (conf.get('mysql', 'user'), conf.get('mysql','password'), conf.get('mysql','ip'), conf.get('mysql','db'))
+
+  File "/usr/lib/python2.7/ConfigParser.py", line 607, in get
+    raise NoSectionError(section)
+
+NoSectionError: No section: 'mysql'
+
+
+#############
+# Data ######
+#############
+
+None
+
+
+#############
+# Stdout ####
+#############
+

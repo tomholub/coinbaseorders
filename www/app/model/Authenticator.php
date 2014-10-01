@@ -10,7 +10,7 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator {
 
 	const
 			TABLE_NAME = 'users',
-			COLUMN_ID = 'user_id',
+			COLUMN_ID = 'id',
 			COLUMN_EMAIL = 'email',
 			COLUMN_PASSWORD = 'password',
 			COLUMN_ROLE = 'role';
@@ -99,7 +99,7 @@ class Authenticator extends Nette\Object implements Security\IAuthenticator {
 	public function getUserIdByEmail($email){
 		$user = $this->database->table(self::TABLE_NAME)->where(self::COLUMN_EMAIL, $email)->fetch();
 		if($user){
-			return $user->user_id;
+			return $user->id;
 		}
 	}
 

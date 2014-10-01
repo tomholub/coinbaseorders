@@ -1,0 +1,15 @@
+[mysql]
+ip = 127.0.0.1
+db = database
+user = user
+password = pass
+
+[path]
+cache = /home/ubuntu/cbo/cache/
+db = /home/ubuntu/cbo/cache/db/
+backup = /home/ubuntu/cbo/backup/
+log = /home/ubuntu/cbo/log/
+
+[gmail]
+email = xxx
+password = xxx
