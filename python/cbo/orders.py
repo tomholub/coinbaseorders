@@ -37,12 +37,6 @@ def processOrder(order, user):
 	
 	print "[processing %s," % note(order),
 	sys.stdout.flush()
-	
-	if "nvimp" not in user.email:
-		print "debug-skip]",
-		sys.stdout.flush()
-		return #test on my own accounts first
-	
 	db.orders[order.id] = {'status': EXECUTING}
 	db.commit()
 	
