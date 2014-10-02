@@ -28,7 +28,6 @@ try:
 	cron.start()
 
 except Exception, err:
-	raise
 	logger.log(sys.exc_info(), cron.getDebugInfo() if cron is not None else None)
 	sys.exit(1)
 

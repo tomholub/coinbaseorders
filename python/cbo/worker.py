@@ -41,7 +41,6 @@ class Worker(threading.Thread):
 					self.db.rollback()
 					time.sleep(5)
 				else:
-					raise
 					self.logger.log(sys.exc_info(), self.getDebugInfo())
 			
 			time.sleep(self.delay)

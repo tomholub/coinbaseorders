@@ -13,11 +13,9 @@
 # logFileName = rpc_logger.log(sys.exc_info(), dictionaryToDump)
 #
 
-import sys, pprint, traceback, string, os, datetime, inspect, configurator, json
+import sys, pprint, traceback, string, os, datetime, inspect, json
+import configurator, mailer
 import thread
-import smtplib, email
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 ACCESSDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../log/access/'
 ERRORDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../log/error/'
