@@ -84,10 +84,6 @@ def processBuyAt(currentBuyPrice):
 	)
 	for order in triggeredOrders.select():
 		user = db.users[order.user_id]
-		if "nvimp" not in user.email:
-			print "#",
-			sys.stdout.flush()
-			continue
 		if user.coinbase_access_token is not None:
 			totalBuyPrice = price.getBuyPrice(order.amount) #todo - ask for price with users tokens
 			if totalBuyPrice is not None and totalBuyPrice <= order.at_price * order.amount:
@@ -103,10 +99,6 @@ def processSellAt(currentSellPrice):
 	)
 	for order in triggeredOrders.select():
 		user = db.users[order.user_id]
-		if "nvimp" not in user.email:
-			print "#",
-			sys.stdout.flush()
-			continue
 		if user.coinbase_access_token is not None:
 			totalSellPrice = price.getSellPrice(order.amount) #todo - ask for price with users tokens
 			if totalSellPrice is not None and totalSellPrice >= order.at_price * order.amount:
