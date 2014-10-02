@@ -16,8 +16,6 @@ def mysqlString():
 	return 'mysql://%s:%s@%s/%s' % (conf.get('mysql', 'user'), conf.get('mysql','password'), conf.get('mysql','ip'), conf.get('mysql','db'))
 
 def getGmailAuth(key):
-	if conf.get('services','email') != 'gmail':
-		return None
 	return conf.get('gmail', key)
 
 def getDebugEmail():

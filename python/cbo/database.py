@@ -61,6 +61,7 @@ class ConnectionManager():
 			Field('status', 'string', required=True, notnull=True), \
 			Field('action', 'string', required=True, notnull=True), \
 			Field('amount', 'float', required=True, notnull=True), \
+			Field('at_price', 'float', required=True, notnull=True), \
 			Field('amount_currency', 'string', required=True, notnull=True), \
 			Field('date_created', 'datetime', required=True, notnull=True), \
 			Field('date_cancel', 'datetime', default=None), \

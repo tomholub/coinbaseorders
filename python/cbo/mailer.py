@@ -1,5 +1,8 @@
 
 import configurator
+import smtplib, email
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def send(to, subject, body):
 	try:

@@ -28,10 +28,12 @@ class Worker(threading.Thread):
 			
 			try:
 				
-				price.updateBuyPrice()
-				price.updateSellPrice()
-				#orders.checkBuy()
-				#orders.checkSell()
+				buyPrice = price.updateBuyPrice()
+				sellPrice = price.updateSellPrice()
+				print ".",
+				sys.stdout.flush()
+				orders.processBuyAt(buyPrice)
+				orders.processSellAt(sellPrice)
 
 			except Exception, err:
 				if err.__class__.__name__ == 'OperationalError' and err[0] == 1213: # deadlock
@@ -39,6 +41,7 @@ class Worker(threading.Thread):
 					self.db.rollback()
 					time.sleep(5)
 				else:
+					raise
 					self.logger.log(sys.exc_info(), self.getDebugInfo())
 			
 			time.sleep(self.delay)
