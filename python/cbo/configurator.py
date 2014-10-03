@@ -19,7 +19,4 @@ def getGmailAuth(key):
 	return conf.get('gmail', key)
 
 def getDebugEmail():
-	return conf.get('debug', 'email')
-
-def isDebugOn():
-	return conf.get('debug', 'enabled')
+	return conf.get('gmail', 'email')

@@ -17,34 +17,7 @@ import sys, pprint, traceback, string, os, datetime, inspect, json
 import configurator, mailer
 import thread
 
-ACCESSDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../log/access/'
-ERRORDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + '/../../log/error/'
-
-if not os.path.exists(ACCESSDIR):
-	os.makedirs(ACCESSDIR)
-
-def logAccess(user, function, request, response, startTime):
-	if user is None:
-		filename = "anonymous"
-	else:
-		filename = "%s_%s_%d_%s" % ( user.firstName, user.lastName, user.id, user.facebookId)
-
-	if "success" in response.keys():
-		filepath = "%s%s.log" % (ACCESSDIR, filename)
-	else:
-		filepath = "%s%s.log" % (ERRORDIR, 'error')
-
-	with open(filepath, "a") as myfile:
-		exectime = datetime.datetime.now() - startTime
-		ms = (exectime.microseconds/1000) + (exectime.seconds*1000)
-		myfile.write("\n".join([
-			"[%s] %s" % (str(datetime.datetime.now()), function),
-			"REQUEST: %s" % json.dumps(request),
-			"RESPONSE: %s" % json.dumps(response),
-			"TIME: %dms" % ms,
-			"",
-			"",
-		]))
+ERRORDIR = configurator.getPath('log') + 'error/'
 
 def formatDirectoryName(unformatted):
 	valid_chars = "-_.(): %s%s" % (string.ascii_letters, string.digits)
@@ -84,9 +57,8 @@ def log(exc_info, dump = [], stdout = ''):
 	
 	if not os.path.exists(ERRORDIR + exceptionLogDir):
 		os.makedirs(ERRORDIR + exceptionLogDir)
-		if configurator.isDebugOn():
-			body = "<br/>".join(content).replace(' ', '&nbsp;').replace('\n','<br/>')
-			sendEmailNotification('New unhandled exception ('+str(exc_type.__name__) +': '+ str(exc_value)[:100]+')', body)
+		body = "<br/>".join(content).replace(' ', '&nbsp;').replace('\n','<br/>')
+		sendEmailNotification('New unhandled exception ('+str(exc_type.__name__) +': '+ str(exc_value)[:100]+')', body)
 	
 	now = datetime.datetime.now()
 	fileName = now.strftime("exception_%Y-%m-%d_%H:%M:%S:") + str(now.microsecond).zfill(6) + ".log"
