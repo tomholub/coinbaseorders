@@ -30,10 +30,19 @@ class Worker(threading.Thread):
 				
 				buyPrice = price.updateBuyPrice()
 				sellPrice = price.updateSellPrice()
+				
+				if buyPrice is not None:
+					orders.processBuyAt(buyPrice)
+				else:
+					print "#",
+				
+				if sellPrice is not None:
+					orders.processSellAt(sellPrice)
+				else:
+					print "#",
+					
 				print ".",
 				sys.stdout.flush()
-				orders.processBuyAt(buyPrice)
-				orders.processSellAt(sellPrice)
 
 			except Exception, err:
 				if err.__class__.__name__ == 'OperationalError' and err[0] == 1213: # deadlock
