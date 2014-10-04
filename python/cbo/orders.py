@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 db = None
-import price, mailer, sys
+import price, mailer, sys, json
+from coinbase import CoinbaseAccount, CoinbaseTransfer, CoinbaseError
+from datetime import datetime
 
 EXECUTING = 'EXECUTING'
 EXECUTED = 'EXECUTED'
@@ -33,6 +35,24 @@ def getEmailText(order, result):
 	text += 'I appriciate your help!\n\nTom'
 	return text.replace("\n","\n<br>")
 
+def makeCoinbaseAuthString(user):
+	expiration = datetime.fromtimestamp(user['coinbase_expire_time'])
+	print expiration.isoformat() + "|" + "2013-03-24T02:37:50Z"
+	credentials = {
+#		"_module": "oauth2client.client",
+		"access_token": user['coinbase_access_token'], 
+		"refresh_token": user['coinbase_refresh_token'], 
+		"token_expiry": expiration.isoformat()+'Z',
+#		"token_response": {"access_token": user['coinbase_access_token'], "token_type": "bearer", "expires_in": 7200, "refresh_token": user['coinbase_refresh_token'], "scope": "all"},
+		"invalid": False,
+		"token_uri": "https://www.coinbase.com/oauth/token", 
+		"client_id": "73980e1a5f0e2b17a7780129b505e95a6504387962a59364c04649791452cd72", 
+		"client_secret": "2abe2652bd5ccb725c2574592f0cb1b60c6ab2fdc8c0631525b733f21c64dba1", 
+		"revoke_uri": "https://accounts.google.com/o/oauth2/revoke",
+		"user_agent": None,
+	}
+	return json.dumps(credentials)
+
 def processOrder(order, user):
 	
 	print "[processing %s," % note(order),
@@ -41,32 +61,46 @@ def processOrder(order, user):
 	db.commit()
 	
 	try:
-		# from coinbase import CoinbaseAccount
-		# user['coinbase_access_token'], user['coinbase_refresh_token'], user['coinbase_expire_time']
-		# coinbaseAccount = CoinbaseAccount(...)
-		# result = coinbaseAccount.buy/sell(order['amount'])
-		# if result is OK:
-		# 	print "success]",
-		# 	sys.stdout.flush()
-		# 	db.orders[order.id] = {'status': EXECUTED}
-		# 	db.commit()
-		# 	mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
-		# else:
-		# 	raise CoinbaseTradeException(order, result)
-		
-		print "notice]",
-		sys.stdout.flush()
-		db.orders[order.id] = {'status': NOTIFIED}
-		db.commit()
-		mailer.send(user.email, getEmailTitle(order, NOTIFIED), getEmailText(order, NOTIFIED))
-	except:
+		if "nvimp" in user.email: #test it first
+			
+			coinbaseAccount = CoinbaseAccount(oauth2_credentials=makeCoinbaseAuthString(user))
+			if coinbaseAccount.token_expired:
+				newCredentials = coinbaseAccount.refresh_oauth()
+				db.users[user.id] = {
+					"coinbase_expire_time": newCredentials.token_expiry,
+					"coinbase_access_token": newCredentials.access_token,
+					"coinbase_refresh_token": newCredentials.refresh_token,
+				}
+			
+			if order['action'] == 'BUY':
+				result = coinbaseAccount.buy_btc(order['amount'])
+			elif order['action'] == 'SELL':
+				result = coinbaseAccount.sell_btc(order['amount'])
+			else:
+				raise ValueError
+			
+			if isinstance(result, CoinbaseTransfer):
+				print "success]",
+				sys.stdout.flush()
+				db.orders[order.id] = {'status': EXECUTED}
+				db.commit()
+				mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
+			else:
+				raise result
+		else:
+			print "notice]",
+			sys.stdout.flush()
+			db.orders[order.id] = {'status': NOTIFIED}
+			db.commit()
+			mailer.send(user.email, getEmailTitle(order, NOTIFIED), getEmailText(order, NOTIFIED))
+	except Exception, err:
 		#todo: log the problem
 		print "fail]",
 		sys.stdout.flush()
 		db.orders[order.id] = {'status': FAILED}
 		db.commit()
 		mailer.send(user.email, getEmailTitle(order, FAILED), getEmailText(order, FAILED))
-	
+		raise
 
 def processBuyAt(currentBuyPrice):
 	triggeredOrders = db(\

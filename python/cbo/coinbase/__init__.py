@@ -45,8 +45,8 @@ import inspect
 #TODO: Switch to decimals from floats
 #from decimal import Decimal
 
-from coinbase.config import COINBASE_ENDPOINT
-from coinbase.models import CoinbaseAmount, CoinbaseTransaction, CoinbaseUser, CoinbaseTransfer, CoinbaseError, CoinbasePaymentButton
+from config import COINBASE_ENDPOINT
+from models import CoinbaseAmount, CoinbaseTransaction, CoinbaseUser, CoinbaseTransfer, CoinbaseError, CoinbasePaymentButton
 
 
 class CoinbaseAccount(object):
@@ -115,7 +115,6 @@ class CoinbaseAccount(object):
         """
         Internal function to check if the oauth2 credentials are expired
         """
-
         #Check if they are expired
         if self.oauth2_credentials.access_token_expired:
 
@@ -243,6 +242,7 @@ class CoinbaseAccount(object):
         }
         response = self.session.post(url=url, data=json.dumps(request_data),
                                      params=self.global_request_params)
+        print "@@@",response.status_code,response,"@@@"
         response_parsed = response.json()
         if response_parsed['success'] == False:
             return CoinbaseError(response_parsed['errors'])
