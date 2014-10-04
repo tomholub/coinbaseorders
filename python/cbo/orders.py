@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 
 db = None
-import price, mailer, sys, json
-from coinbase import CoinbaseAccount, CoinbaseTransfer, CoinbaseError
+
+import sys, json
 from datetime import datetime
+
+import price, mailer, configurator
+from coinbase import CoinbaseAccount, CoinbaseTransfer, CoinbaseError
+from crypt import encrypt, decrypt
+
+KEY = configurator.getEncryptionKey()
 
 EXECUTING = 'EXECUTING'
 EXECUTED = 'EXECUTED'
@@ -36,19 +42,28 @@ def getEmailText(order, result):
 	return text.replace("\n","\n<br>")
 
 def makeCoinbaseAuthString(user):
-	expiration = datetime.fromtimestamp(user['coinbase_expire_time'])
-	print expiration.isoformat() + "|" + "2013-03-24T02:37:50Z"
+	expiration = datetime.fromtimestamp(user['coinbase_expire_time']).isoformat()+'Z'
+	access = decrypt(KEY, user['coinbase_access_token'])
+	refresh = decrypt(KEY, user['coinbase_refresh_token'])
+	#print "[", access, refresh, "]"
+	
 	credentials = {
-#		"_module": "oauth2client.client",
-		"access_token": user['coinbase_access_token'], 
-		"refresh_token": user['coinbase_refresh_token'], 
-		"token_expiry": expiration.isoformat()+'Z',
-#		"token_response": {"access_token": user['coinbase_access_token'], "token_type": "bearer", "expires_in": 7200, "refresh_token": user['coinbase_refresh_token'], "scope": "all"},
+		"_module": "oauth2client.client",
+		"access_token": access, 
+		"refresh_token": refresh,
+		"token_expiry": expiration,
+#		"token_response": {
+#			"access_token": access, 
+#			"token_type": "bearer",
+#			"expires_in": 7200,
+#			"refresh_token": refresh,
+#			"scope": "all"
+#		},
 		"invalid": False,
 		"token_uri": "https://www.coinbase.com/oauth/token", 
 		"client_id": "73980e1a5f0e2b17a7780129b505e95a6504387962a59364c04649791452cd72", 
 		"client_secret": "2abe2652bd5ccb725c2574592f0cb1b60c6ab2fdc8c0631525b733f21c64dba1", 
-		"revoke_uri": "https://accounts.google.com/o/oauth2/revoke",
+#		"revoke_uri": "https://accounts.google.com/o/oauth2/revoke",
 		"user_agent": None,
 	}
 	return json.dumps(credentials)
@@ -67,9 +82,9 @@ def processOrder(order, user):
 			if coinbaseAccount.token_expired:
 				newCredentials = coinbaseAccount.refresh_oauth()
 				db.users[user.id] = {
-					"coinbase_expire_time": newCredentials.token_expiry,
-					"coinbase_access_token": newCredentials.access_token,
-					"coinbase_refresh_token": newCredentials.refresh_token,
+					"coinbase_expire_time": encrypt(KEY, newCredentials.token_expiry),
+					"coinbase_access_token": encrypt(KEY, newCredentials.access_token),
+					"coinbase_refresh_token": encrypt(KEY, newCredentials.refresh_token),
 				}
 			
 			if order['action'] == 'BUY':

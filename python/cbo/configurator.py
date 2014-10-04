@@ -15,6 +15,9 @@ def getPath(name):
 def mysqlString():
 	return 'mysql://%s:%s@%s/%s' % (conf.get('mysql', 'user'), conf.get('mysql','password'), conf.get('mysql','ip'), conf.get('mysql','db'))
 
+def getEncryptionKey():
+	return conf.get('mysql', 'crypt')
+
 def getGmailAuth(key):
 	return conf.get('gmail', key)
 

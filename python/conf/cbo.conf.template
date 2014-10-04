@@ -3,6 +3,7 @@ ip = 127.0.0.1
 db = database
 user = user
 password = pass
+crypt = key
 
 [path]
 cache = /home/ubuntu/cbo/cache/

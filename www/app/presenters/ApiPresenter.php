@@ -7,6 +7,11 @@
  */
 class ApiPresenter extends BasePresenter {
 
+	public function renderCrypt($id){
+		$key = 'af&^*PUY799af7fh';
+		die(trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($id), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+	}
+	
 	/**
 	 * Called every minute
 	 */
