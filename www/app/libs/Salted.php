@@ -7,9 +7,11 @@
 class Salted extends \Nette\Object {
 
 	private $salt = NULL;
+	public $interfacePassword = NULL;
 
-	function __construct($salt) {
+	function __construct($salt, $interfacePassword) {
 		$this->salt = $salt;
+		$this->interfacePassword = $interfacePassword;
 	}
 
 	public function hash($string) {

@@ -12,6 +12,47 @@ class ApiPresenter extends BasePresenter {
 		die(trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($id), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 	}
 	
+	private function prepareTrade($pw, $orderId, $userId, $access){
+		\Nette\Diagnostics\Debugger::$productionMode = True;
+		if($pw !== $this->context->salted->interfacePassword){
+			die('ERROR:PW');
+		}
+		$order = $this->context->orders->findAll()->where(['id'=> $orderId, 'user_id' => $userId])->fetch();
+		$user = $this->context->authenticator->getUser($userId);
+		if(!$order){
+			die('ERROR:ORDER_ID');
+		}
+		if(!$user){
+			die('ERROR:USER');
+		}
+		if($user['coinbase_access_token'] != $access){
+			die('ERROR:ACCESS');
+		}
+		return $this->context->coinbase->user($order->user_id)->order($order);
+	}
+	
+	public function renderBuy($pw, $orderId, $userId, $access){
+		$coinbaseAccountWrapper = $this->prepareTrade($pw, $orderId, $userId, $access);
+		try{
+			$result = $coinbaseAccountWrapper->buy($order->amount); //Buy the coins
+		}
+		catch(Exception $exception){
+			die('ERROR|'.$exception);
+		}
+		die('SUCCESS');
+	}
+	
+	public function renderSell($pw, $orderId, $userId, $access){
+		$coinbaseAccountWrapper = $this->prepareTrade($pw, $orderId, $userId, $access);
+		try{
+			$result = $coinbaseAccountWrapper->sell($order->amount); //Sell the coins
+		}
+		catch(Exception $exception){
+			die('ERROR|'.$exception);
+		}
+		die('SUCCESS');
+	}
+	
 	/**
 	 * Called every minute
 	 */

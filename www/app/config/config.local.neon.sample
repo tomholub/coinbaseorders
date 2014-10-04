@@ -4,6 +4,7 @@ parameters:
 	OauthClientUrl: '...'
 	salt: '...'
 	gmailPwd: '...'
+	interfacePassword: '...'
 
 php:
 	date.timezone: US/Pacific
@@ -38,7 +39,7 @@ services:
 	orders: OrdersModel
 	logs: LogsModel
 	coinbase: CoinbaseWrapper(%OauthClientId%, %OauthClientSecret%)
-	salted: Salted(%salt%)
+	salted: Salted(%salt%, %interfacePassword%)
 	values: ValuesModel
 	texts: Texts
 	coinbasePrice: CoinbasePrice

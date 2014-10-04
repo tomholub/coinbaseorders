@@ -3,7 +3,7 @@
 
 db = None
 
-import sys, json
+import sys, json, requests
 from datetime import datetime
 
 import price, mailer, configurator
@@ -78,30 +78,25 @@ def processOrder(order, user):
 	try:
 		if "nvimp" in user.email: #test it first
 			
-			coinbaseAccount = CoinbaseAccount(oauth2_credentials=makeCoinbaseAuthString(user))
-			if coinbaseAccount.token_expired:
-				newCredentials = coinbaseAccount.refresh_oauth()
-				db.users[user.id] = {
-					"coinbase_expire_time": encrypt(KEY, newCredentials.token_expiry),
-					"coinbase_access_token": encrypt(KEY, newCredentials.access_token),
-					"coinbase_refresh_token": encrypt(KEY, newCredentials.refresh_token),
-				}
+			url = configurator.getApiUrl(order['action'])
+			params = {
+				'orderId': order.id,
+				'userId': user.id,
+				'access': user.coinbase_access_token,
+				'pw': configurator.getWebPw(),
+			}
+			r = requests.get(url, params=params)
+			print r.status_code
+			print r.text
 			
-			if order['action'] == 'BUY':
-				result = coinbaseAccount.buy_btc(order['amount'])
-			elif order['action'] == 'SELL':
-				result = coinbaseAccount.sell_btc(order['amount'])
-			else:
-				raise ValueError
-			
-			if isinstance(result, CoinbaseTransfer):
+			if r.status_code == 200 and 'SUCCESS' in r.text:
 				print "success]",
 				sys.stdout.flush()
 				db.orders[order.id] = {'status': EXECUTED}
 				db.commit()
 				mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
 			else:
-				raise result
+				raise Exception('could not buy')
 		else:
 			print "notice]",
 			sys.stdout.flush()

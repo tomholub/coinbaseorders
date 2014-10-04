@@ -5,6 +5,10 @@ user = user
 password = pass
 crypt = key
 
+[web]
+pw = ....
+url = http://l.coinbaseorders.com
+
 [path]
 cache = /home/ubuntu/cbo/cache/
 db = /home/ubuntu/cbo/cache/db/

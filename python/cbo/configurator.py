@@ -18,6 +18,12 @@ def mysqlString():
 def getEncryptionKey():
 	return conf.get('mysql', 'crypt')
 
+def getWebPw():
+	return conf.get('web', 'pw')
+
+def getApiUrl(action):
+	return conf.get('web', 'url') + 'api/' + action.lower()
+
 def getGmailAuth(key):
 	return conf.get('gmail', key)
 
