@@ -10,26 +10,25 @@ OK = 200
 def getBuyPrice(quantity = 1.00):
 	connection = httplib.HTTPSConnection("coinbase.com", 443)
 	connection.request('GET', '/api/v1/prices/buy?qty=%f' % quantity)
-	response = connection.getresponse()
-	if response.status == OK:
-		try:
+	try:
+		response = connection.getresponse()
+		if response.status == OK:
 			data = json.loads(response.read())
 			return float(data['subtotal']['amount'])
-		except:
-			return None
-	return None
+	except:
+		pass
 
 def getSellPrice(quantity = 1.00):
 	connection = httplib.HTTPSConnection("coinbase.com", 443)
 	connection.request('GET', '/api/v1/prices/sell?qty=%f' % quantity)
-	response = connection.getresponse()
-	if response.status == OK:
-		try:
+	
+	try:
+		response = connection.getresponse()
+		if response.status == OK:
 			data = json.loads(response.read())
 			return float(data['subtotal']['amount'])
-		except:
-			return None
-	return None
+	except:
+		pass
 
 def updateBuyPrice():
 	buyPrice = getBuyPrice(1)
