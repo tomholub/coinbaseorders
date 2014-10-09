@@ -76,33 +76,27 @@ def processOrder(order, user):
 	db.commit()
 	
 	try:
-		if "nvimp" in user.email: #test it first
 			
-			url = configurator.getApiUrl(order['action'])
-			params = {
-				'orderId': order.id,
-				'userId': user.id,
-				'access': user.coinbase_access_token,
-				'pw': configurator.getWebPw(),
-			}
-			r = requests.get(url, params=params)
-			print r.status_code
-			print r.text
-			
-			if r.status_code == 200 and 'SUCCESS' in r.text:
-				print "success]",
-				sys.stdout.flush()
-				db.orders[order.id] = {'status': EXECUTED}
-				db.commit()
-				mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
-			else:
-				raise Exception('could not buy')
-		else:
-			print "notice]",
+		url = configurator.getApiUrl(order['action'])
+		params = {
+			'orderId': order.id,
+			'userId': user.id,
+			'access': user.coinbase_access_token,
+			'pw': configurator.getWebPw(),
+		}
+		r = requests.get(url, params=params)
+		print r.status_code
+		print r.text
+		
+		if r.status_code == 200 and 'SUCCESS' in r.text:
+			print "success]",
 			sys.stdout.flush()
-			db.orders[order.id] = {'status': NOTIFIED}
+			db.orders[order.id] = {'status': EXECUTED}
 			db.commit()
-			mailer.send(user.email, getEmailTitle(order, NOTIFIED), getEmailText(order, NOTIFIED))
+			mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
+		else:
+			raise Exception('could not buy')
+
 	except Exception, err:
 		#todo: log the problem
 		print "fail]",
