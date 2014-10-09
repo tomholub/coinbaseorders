@@ -93,7 +93,11 @@ def processOrder(order, user):
 			sys.stdout.flush()
 			db.orders[order.id] = {'status': EXECUTED}
 			db.commit()
-			mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
+			try:
+				mailer.send(user.email, getEmailTitle(order, EXECUTED), getEmailText(order, EXECUTED))
+			except Exception, err:
+				if err.__class__.__name__ != 'SMTPAuthenticationError': #temp email problem
+					raise
 		else:
 			raise Exception('could not buy')
 
