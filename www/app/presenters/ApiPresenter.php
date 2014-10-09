@@ -23,13 +23,13 @@ class ApiPresenter extends BasePresenter {
 		if($user['coinbase_access_token'] != $access){
 			die('ERROR:ACCESS');
 		}
-		return $this->context->coinbase->user($order->user_id)->order($order);
+		return $order;
 	}
 	
 	public function renderBuy($pw, $orderId, $userId, $access){
-		$coinbaseAccountWrapper = $this->prepareTrade($pw, $orderId, $userId, $access);
+		$order = $this->prepareTrade($pw, $orderId, $userId, $access);
 		try{
-			$result = $coinbaseAccountWrapper->buy($order->amount); //Buy the coins
+			$this->context->coinbase->user($order->user_id)->order($order)->buy($order->amount);
 		}
 		catch(Exception $exception){
 			die('ERROR|'.$exception);
@@ -38,9 +38,9 @@ class ApiPresenter extends BasePresenter {
 	}
 	
 	public function renderSell($pw, $orderId, $userId, $access){
-		$coinbaseAccountWrapper = $this->prepareTrade($pw, $orderId, $userId, $access);
+		$order = $this->prepareTrade($pw, $orderId, $userId, $access);
 		try{
-			$result = $coinbaseAccountWrapper->sell($order->amount); //Sell the coins
+			$this->context->coinbase->user($order->user_id)->order($order)->sell($order->amount);
 		}
 		catch(Exception $exception){
 			die('ERROR|'.$exception);
