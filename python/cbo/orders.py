@@ -85,8 +85,8 @@ def processOrder(order, user):
 			'pw': configurator.getWebPw(),
 		}
 		r = requests.get(url, params=params)
-		print r.status_code
-		print r.text
+		print r.status_code, 
+		print r.text, 
 		
 		if r.status_code == 200 and 'SUCCESS' in r.text:
 			print "success]",
