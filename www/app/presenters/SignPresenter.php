@@ -115,7 +115,7 @@ class SignPresenter extends BasePresenter {
 		if ($userId == NULL) {
 			$this->flashMessage('Can\'t verify your account.');
 		} elseif ($this->context->authenticator->verifyEmail($userId, $emailCode)) {
-			$this->flashMessage('Your email is verified. Now you can connect this app with Coinbase.');
+			$this->flashMessage('Your email is verified. Now you can log in and connect this app with Coinbase.');
 		} else {
 			$this->flashMessage('I wasn\'t able to verify your email. This usually happens if you are not logged in. Please log in and click on email link again.');
 		}
