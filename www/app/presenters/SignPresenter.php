@@ -42,7 +42,7 @@ class SignPresenter extends BasePresenter {
 			$this->redirect('Homepage:default');
 		} catch (Nette\Security\AuthenticationException $e) {
 			$resetLink = $this->link('sendResetEmail!', Array('email' => $values->email));
-			$this->flashMessage($e->getMessage().($e->getCode() == Authenticator::INVALID_CREDENTIAL ? " You can <a href=\"$resetLink\">reset your password</a>" : ''));
+			$this->flashMessage($e->getMessage() . ($e->getCode() == Authenticator::INVALID_CREDENTIAL ? " You can <a href=\"$resetLink\">reset your password</a>" : ''));
 		}
 	}
 
@@ -86,7 +86,10 @@ class SignPresenter extends BasePresenter {
 		} else {
 			$this->getUser()->login($values->email, $values->password);
 
-			$verificationLink = $this->link("//Sign:verifyEmail", Array('emailCode' => $this->user->identity->email_confirmation));
+			$verificationLink = $this->link("//Sign:verifyEmail", Array(
+				'emailCode' => $this->user->identity->email_confirmation,
+				'email' => $values->email,
+			));
 			$email = new Nette\Mail\Message();
 			$email->setFrom('tom@coinbaseorders.com')->addTo($values['email'])
 					->setSubject('Coinbase Orders: Verify your email address')
@@ -102,21 +105,29 @@ class SignPresenter extends BasePresenter {
 		$this->redirect('in');
 	}
 
-	public function actionVerifyEmail($emailCode) {
-		if ($this->context->authenticator->verifyEmail($this->user->id, $emailCode)) {
+	public function actionVerifyEmail($emailCode, $email = NULL) {
+		if ($this->user->isLoggedIn()) {
+			$userId = $this->user->id;
+		} else {
+			$userId = $this->context->authenticator->getUserIdByEmail($email);
+		}
+
+		if ($userId == NULL) {
+			$this->flashMessage('Can\'t verify your account.');
+		} elseif ($this->context->authenticator->verifyEmail($userId, $emailCode)) {
 			$this->flashMessage('Your email is verified. Now you can connect this app with Coinbase.');
 		} else {
-			$this->flashMessage('I wasn\'t able to verify your email, please contact me at tom@coinbaseorders.com so I can fix it.');
+			$this->flashMessage('I wasn\'t able to verify your email. This usually happens if you are not logged in. Please log in and click on email link again.');
 		}
 		$this->redirect($this->home);
 	}
-	
-	public function renderProfile(){
+
+	public function renderProfile() {
 		if (!$this->user->isLoggedIn()) {
 			$this->redirect('Sign:in');
 		}
 	}
-	
+
 	/**
 	 * Sign-in form factory.
 	 * @return Nette\Application\UI\Form
@@ -125,17 +136,17 @@ class SignPresenter extends BasePresenter {
 		$form = new UI\Form;
 
 		$form->addText('username', 'How should I call you?')
-			->setDefaultValue($this->user->identity->username);
+				->setDefaultValue($this->user->identity->username);
 
 		$form->addPassword('password', 'Set New Password:')
-			->addCondition(\Nette\Forms\Form::FILLED)
+				->addCondition(\Nette\Forms\Form::FILLED)
 				->addRule(\Nette\Forms\Form::LENGTH, 'Password should be 6 to 500 characters long.', Array(6, 500));
 
 		$form->addPassword('password2', 'Verify Password:')
-			->addConditionOn($form['password'], Nette\Forms\Form::FILLED)
+				->addConditionOn($form['password'], Nette\Forms\Form::FILLED)
 				->addRule(Nette\Forms\Form::FILLED, 'Please verify your new password.')
 				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);
-		
+
 		$form->addSubmit('send', 'Update');
 
 		$form->onSuccess[] = $this->profileFormSucceeded;
@@ -150,28 +161,27 @@ class SignPresenter extends BasePresenter {
 			$updateValues['password'] = $this->context->salted->hash($values['password']);
 		}
 		$this->context->authenticator->update($this->user->id, $updateValues);
-		$this->flashMessage('Profile updated').
-		$this->redirect('Sign:profile');
-	}	
-	
-	public function handleSendResetEmail($email){
-		if($userId = $this->context->authenticator->getUserIdByEmail($email)){
+		$this->flashMessage('Profile updated') .
+				$this->redirect('Sign:profile');
+	}
+
+	public function handleSendResetEmail($email) {
+		if ($userId = $this->context->authenticator->getUserIdByEmail($email)) {
 			$randomHash = $this->context->authenticator->setRandomHash($userId);
 			$link = $this->link("//Sign:resetPassword", Array('id' => $userId, 'randomHash' => $randomHash));
 			new SendEmail($email, "Reset your password", "Please follow this link to reset your password: <a href=\"$link\">$link</a>");
 			$this->flashMessage("Reset link was sent to $email", "success");
 			$this->redirect($this->home);
-		}
-		else{
+		} else {
 			$this->flashMessage("This email is not registered", "error");
 			$this->redirect('Sign:in');
 		}
 	}
-	
-	public function actionResetPassword($id, $randomHash){
+
+	public function actionResetPassword($id, $randomHash) {
 		$this->template->verificationSuccess = $this->context->authenticator->verifyRandomHash($id, $randomHash);
 	}
-	
+
 	/**
 	 * Sign-in form factory.
 	 * @return Nette\Application\UI\Form
@@ -185,11 +195,12 @@ class SignPresenter extends BasePresenter {
 
 		$form->addPassword('password2', 'New Password Again:')
 				->setRequired('Please enter your new password.')
-				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);;
+				->addRule(\Nette\Forms\Form::EQUAL, 'Passwords don\'t match', $form['password']);
+		;
 
 		$form->addHidden('randomHash', $this->presenter->getParam('randomHash'));
 		$form->addHidden('userId', $this->presenter->getParam('id'));
-				
+
 		$form->addSubmit('submit', 'Reset password');
 
 		$form->onSuccess[] = $this->resetPasswordFormSucceeded;
@@ -199,15 +210,15 @@ class SignPresenter extends BasePresenter {
 	public function resetPasswordFormSucceeded($form) {
 		$values = $form->getValues();
 
-		if($user = $this->context->authenticator->resetPassword($values->userId, $values->randomHash, $values->password)){
+		if ($user = $this->context->authenticator->resetPassword($values->userId, $values->randomHash, $values->password)) {
 			$this->getUser()->login($user->email, $values->password);
 			new SendEmail($user->email, 'Coinbase Orders: Password was reset', 'Your password was succesfuly reset');
 			$this->flashMessage("Password succesfuly reset.", 'success');
 			$this->redirect($this->home);
-		}
-		else{
+		} else {
 			$this->flashMessage("Could not verify password reset.", 'error');
 			$this->redirect('Sign:in');
 		}
-	}	
+	}
+
 }

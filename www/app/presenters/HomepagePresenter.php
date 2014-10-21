@@ -59,7 +59,10 @@ class HomepagePresenter extends BasePresenter {
 	}
 	
 	public function handlesendAgain(){
-		$verificationLink = $this->link("//Sign:verifyEmail", Array('emailCode' => $this->user->identity->email_confirmation));
+		$verificationLink = $this->link("//Sign:verifyEmail", Array(
+			'emailCode' => $this->user->identity->email_confirmation,
+			'email' => $this->user->identity->email,
+		));
 		$email = new Nette\Mail\Message();
 		$email->setFrom('tom@coinbaseorders.com')->addTo($this->user->identity->email)
 				->setSubject('Coinbase Orders: Verify your email address')
