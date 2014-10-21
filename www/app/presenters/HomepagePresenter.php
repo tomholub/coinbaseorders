@@ -57,5 +57,16 @@ class HomepagePresenter extends BasePresenter {
 			$this->redirect($this->home);
 		}
 	}
+	
+	public function handlesendAgain(){
+		$verificationLink = $this->link("//Sign:verifyEmail", Array('emailCode' => $this->user->identity->email_confirmation));
+		$email = new Nette\Mail\Message();
+		$email->setFrom('tom@coinbaseorders.com')->addTo($this->user->identity->email)
+				->setSubject('Coinbase Orders: Verify your email address')
+				->setHtmlBody('Thanks for registering! ' . \Nette\Utils\Html::el('a')->href($verificationLink)->setText('Click here to verify email') . " alternatively copy & paste this link into your browser: $verificationLink")
+				->send();
+		$this->flashMessage("Verification email sent to ".$this->user->identity->email ." again.", 'success');
+		$this->redirect($this->home);
+	}
 
 }
